@@ -2,7 +2,10 @@ package com.example.tccmobile.ui.components.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -13,34 +16,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tccmobile.ui.theme.DarkBlueBackground
 import com.example.tccmobile.ui.theme.TCCMobileTheme
 
 @Composable
 fun BoxForm(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit // Aceita conteúdo
 ) {
-    Box(
+    Column (
         modifier = modifier
-    ) {
-        Text(
-            text = "Olá mundo",
-            modifier = Modifier.padding(16.dp),
-            fontSize = 18.sp,
-            color = Color.White
-        )
-    }
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(DarkBlueBackground)
+            .padding(vertical = 24.dp, horizontal = 20.dp),
+        content = content
+    )
 }
-
-@Preview(showBackground = true)
-@Composable
-fun BoxPreview() {
-    TCCMobileTheme {
-        BoxForm(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxSize()
-                .clip(RoundedCornerShape(5))
-                .background(Color.Blue),
-        )
-    }
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun BoxPreview() {
+//    TCCMobileTheme {
+//        BoxForm(
+//            modifier = Modifier
+//                .padding(10.dp)
+//                .fillMaxSize()
+//                .clip(RoundedCornerShape(5))
+//                .background(Color.Blue),
+//            content =
+//        )
+//    }
+//}
