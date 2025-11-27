@@ -3,45 +3,55 @@ package com.example.tccmobile
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.tccmobile.ui.theme.TCCMobileTheme
+import com.example.tccmobile.ui.componentstwo.DashboardHeader // Importa o componente Header
+import com.example.tccmobile.ui.theme.DarkBlueBackground // Importa a cor de fundo da tela
+import com.example.tccmobile.ui.theme.white
 
+/**
+ * Ponto de entrada principal da aplicação.
+ * Responsável por configurar o tema e iniciar o Compose.
+ *
+ * Agora exibe APENAS o DashboardHeader.
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            TCCMobileTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            // Aqui você aplicaria o seu tema (Theme.kt)
+            MaterialTheme {
+                // A tela usa Surface para aplicar a cor de fundo DarkBlueBackground
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = white
+                ) {
+                    // Chamada direta do seu componente Header
+                    SimpleHeaderDisplay()
                 }
             }
         }
     }
 }
 
+/**
+ * Função Composable simples que apenas exibe o Header.
+ */
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun SimpleHeaderDisplay() {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // O SEU HEADER PERSONALIZADO
+        DashboardHeader(onBackClicked = {
+            // Implementação de clique: Apenas um log no console por enquanto.
+            println("Botão Voltar Clicado na Main Activity")
+        })
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TCCMobileTheme {
-        Greeting("Android")
+        // Espaço em branco abaixo do header. Futuramente, aqui será o Dashboard.
     }
 }
