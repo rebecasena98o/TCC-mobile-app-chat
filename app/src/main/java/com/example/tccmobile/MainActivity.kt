@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.tccmobile.ui.componentstwo.DashboardHeader // Importa o componente Header
 import com.example.tccmobile.ui.theme.DarkBlueBackground // Importa a cor de fundo da tela
+import com.example.tccmobile.ui.screens.DashboardScreen
 import com.example.tccmobile.ui.theme.white
 
 /**
@@ -30,8 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = white
                 ) {
-                    // Chamada direta do seu componente Header
-                    SimpleHeaderDisplay()
+                    DashboardScreen()
                 }
             }
         }
