@@ -21,6 +21,8 @@ import com.example.tccmobile.ui.theme.TextGray
 import com.example.tccmobile.ui.theme.NotificationRed
 import com.example.tccmobile.ui.screens.studentTicketsScreen.Ticket
 import com.example.tccmobile.ui.screens.studentTicketsScreen.TicketTagStatus
+import com.example.tccmobile.ui.theme.Orange
+import com.example.tccmobile.ui.theme.SuperLightOrange
 
 @Composable
 fun TicketCard(
@@ -133,7 +135,12 @@ private fun TicketBodyInfo(categoria: String, nomeAluno: String?, dataAbertura: 
 private fun TicketStatusRow(tags: List<TicketTagStatus>) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         tags.forEach { tag ->
-            StatusChip(tag)
+            StatusBadge(
+                text = tag.label,
+                backgroundColor = tag.containerColor,
+                textColor = tag.contentColor,
+                icon = tag.icon
+            )
         }
     }
 }
@@ -162,32 +169,5 @@ private fun TicketFooter(
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
-    }
-}
-
-@Composable
-fun StatusChip(tag: TicketTagStatus) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .background(tag.containerColor, RoundedCornerShape(8.dp))
-            .padding(horizontal = 12.dp, vertical = 6.dp)
-    ) {
-        if (tag.hasIcon) {
-            val icon = if (tag.label == "Aberto") Icons.Outlined.Schedule else Icons.Outlined.Description
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = tag.contentColor,
-                modifier = Modifier.size(14.dp)
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-        }
-        Text(
-            text = tag.label,
-            color = tag.contentColor,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium
-        )
     }
 }
