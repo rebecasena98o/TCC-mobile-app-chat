@@ -1,4 +1,4 @@
-package com.example.tccmobile.ui.components.DashboardBibliotecario
+package com.example.tccmobile.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,6 +12,9 @@ import androidx.compose.ui.unit.dp
 
 // IMPORTS NECESSÁRIOS: Garante que os componentes e dados de outros arquivos sejam encontrados
 import com.example.tccmobile.R // Para acessar R.drawable.xxx (ícones)
+import com.example.tccmobile.ui.components.DashboardBibliotecario.CompletionCardData
+import com.example.tccmobile.ui.components.DashboardBibliotecario.DashboardHeader
+import com.example.tccmobile.ui.components.DashboardBibliotecario.MetricCardRow
 import com.example.tccmobile.ui.theme.Pink40
 // Importando as cores necessárias
 import com.example.tccmobile.ui.theme.black
