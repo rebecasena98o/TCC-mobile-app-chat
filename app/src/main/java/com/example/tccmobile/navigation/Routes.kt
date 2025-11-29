@@ -5,4 +5,8 @@ object Routes {
     const val REGISTER = "register"
     const val HOME = "home"
     const val NEW_TICKET = "new-ticket"
+
+    const val TICKET = "ticket/{id}"
+
+    fun ticket(id: String) = "ticket$id"
 }
