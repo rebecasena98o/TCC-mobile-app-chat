@@ -8,11 +8,11 @@ import com.example.tccmobile.data.supabase.SupabaseClient.client
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
+import kotlinx.serialization.json.JsonObject
 
 class AuthRepository {
 
-    suspend fun signInStudent(registry: String, password: String): Boolean{
+    suspend fun signIn(registry: String, password: String): Boolean{
         return try {
 
             Log.d("SUPABASE_DEBUG", "registry: $registry")
@@ -23,11 +23,23 @@ class AuthRepository {
                 }
             }.decodeSingle<UserDto>()
 
+            val isStudent = client.postgrest.from("students").select {
+                filter {
+                    eq("user_id", user.id)
+                }
+            }.decodeSingleOrNull<StudentDto>()
+
             Log.d("SUPABASE_DEBUG", "user: ${user.toString()}")
 
             val auth = client.auth.signInWith(Email){
                 this.email = user.email
                 this.password = password
+            }
+
+            client.auth.updateUser {
+                data = mapOf(
+                    "isStudent" to (isStudent != null),
+                ) as JsonObject?
             }
 
             Log.d("SUPABASE_DEBUG", "Auth retornou: $auth")
@@ -44,7 +56,6 @@ class AuthRepository {
                 this.email = student.email
                 this.password = password
             } ?: return false
-
 
             Log.d("SUPABASE_DEBUG", "Auth retornou: $auth")
             val userDto = UserDto(
