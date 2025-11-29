@@ -8,5 +8,5 @@ object Routes {
 
     const val TICKET = "ticket/{id}"
 
-    fun ticket(id: String) = "ticket$id"
+    fun ticket(id: String) = "ticket/$id"
 }
