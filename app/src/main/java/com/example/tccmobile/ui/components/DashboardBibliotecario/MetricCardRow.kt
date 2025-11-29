@@ -11,11 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.tccmobile.R
+
 import com.example.tccmobile.ui.theme.green // Cores importadas do seu Color.kt
 import com.example.tccmobile.ui.theme.yellow // Cores importadas do seu Color.kt
 import com.example.tccmobile.ui.theme.Pink80 // Usando temporariamente para "Novos Envio"
 import com.example.tccmobile.ui.theme.DarkBlueBackground
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PendingActions
+import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material.icons.filled.CheckCircleOutline
+import com.example.tccmobile.R // Mantido
+import com.example.tccmobile.ui.theme.AmareloClaro1
+import com.example.tccmobile.ui.theme.IconBackgroundGreen
+import com.example.tccmobile.ui.theme.IconBackgroundRed
+import com.example.tccmobile.ui.theme.IconBackgroundYellow
+import com.example.tccmobile.ui.theme.Pink40
+import com.example.tccmobile.ui.theme.VermelhoTelha
 
 /**
  * Componente contêiner para exibir a lista de cards EM COLUNA (um abaixo do outro).
@@ -27,9 +40,9 @@ fun MetricCardRow(cardMetrics: List<CompletionCardData>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(horizontal = 10.dp, vertical = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp) // Espaçamento entre os cards
+        verticalArrangement = Arrangement.spacedBy(19.dp) // Espaçamento entre os cards
     ) {
         // Itera sobre a lista de dados e chama o CompletionCard para cada um
         cardMetrics.forEach { data ->
@@ -46,20 +59,28 @@ fun MetricCardRowPreview() {
         CompletionCardData(
             mainTitle = "TCCs Corrigidos",
             detailText = "15 aprovados com sucesso",
-            iconResId = R.drawable.folha,
-            iconTint = green
+            // USANDO Material Icons (CheckCircle)
+            iconVector = Icons.Default.Assignment,
+            iconTint = green,
+            iconBackgroundColor = IconBackgroundGreen
         ),
         CompletionCardData(
             mainTitle = "Pendentes",
             detailText = "Em Análise",
-            iconResId = R.drawable.clock,
-            iconTint = yellow
+            // USANDO Material Icons (PendingActions)
+            iconVector = Icons.Default.AccessTime,
+            iconTint = AmareloClaro1,
+            iconBackgroundColor = IconBackgroundYellow // NOVO: Fundo
+
         ),
         CompletionCardData(
             mainTitle = "Concluídos",
-            detailText = "Aprovados com sucesso",
-            iconResId = R.drawable.uicon,
-            iconTint = Pink80
+            detailText = "aprovados com sucesso",
+            // USANDO Material Icons (Assignment)
+            iconVector = Icons.Default.CheckCircleOutline,
+            iconTint = VermelhoTelha,
+            iconBackgroundColor = IconBackgroundRed // NOVO: Fundo
+
         )
     )
 
