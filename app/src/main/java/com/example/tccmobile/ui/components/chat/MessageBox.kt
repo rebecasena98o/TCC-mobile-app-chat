@@ -1,4 +1,4 @@
-package com.example.tccmobile.ui.components.utils
+package com.example.tccmobile.ui.components.chat
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -11,7 +11,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment

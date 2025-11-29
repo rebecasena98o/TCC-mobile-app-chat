@@ -17,6 +17,14 @@ import com.example.tccmobile.ui.theme.SuperLightOrange
 
 
 //basicamente esse componente vai mostrar o status do ticket
+
+
+data class StatusBadgeModel(
+    val text: String,
+    val backgroundColor: Color,
+    val textColor: Color
+)
+
 @Composable
 fun StatusBadge(
     text: String,

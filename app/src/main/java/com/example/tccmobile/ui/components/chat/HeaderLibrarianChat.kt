@@ -1,4 +1,4 @@
-package com.example.tccmobile.ui.components.utils
+package com.example.tccmobile.ui.components.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,25 +26,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tccmobile.ui.components.utils.StatusBadge
+import com.example.tccmobile.ui.components.utils.StatusBadgeModel
 import com.example.tccmobile.ui.theme.DarkBlue
 import com.example.tccmobile.ui.theme.LightBlue
 import com.example.tccmobile.ui.theme.Orange
 import com.example.tccmobile.ui.theme.SuperLightOrange
 import com.example.tccmobile.ui.theme.White
-data class BadgeInfo(
-    val text: String,
-    val backgroundColor: Color,
-    val textColor: Color
-)
 
 @Composable
 fun HeaderLibrarianChat(
+    ticketId: String,
     title: String,
     subtitle: String,
     studentName: String,
     studentId: String,
     studentEmail: String,
-    badges: List<BadgeInfo>,
+    badges: List<StatusBadgeModel>,
     onBackClick: () -> Unit = {},
     onMenuClick: () -> Unit = {}
 ) {
@@ -95,6 +93,14 @@ fun HeaderLibrarianChat(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "#$ticketId",
+            color = White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeight = 30.sp
+        )
 
         Text(
             text = title,
@@ -161,15 +167,16 @@ fun InfoRow(label: String, value: String) {
 @Composable
 fun HeaderLibrarianChatPreview() {
     HeaderLibrarianChat(
+        ticketId = "123131",
         title = "Desenvolvimento de Sistema Web",
         subtitle = "Engenharia de Software",
         studentName = "João Silva",
         studentId = "2021001234",
         studentEmail = "joao.silva@edu.unifor.br",
         badges = listOf(
-            BadgeInfo("Aberto", LightBlue, DarkBlue),
-            BadgeInfo("Pendente", SuperLightOrange, Orange),
-            BadgeInfo("teste", Color.Red, Color.White)
+            StatusBadgeModel("Aberto", LightBlue, DarkBlue),
+            StatusBadgeModel("Pendente", SuperLightOrange, Orange),
+            StatusBadgeModel("teste", Color.Red, Color.White)
         )
     )
 }
