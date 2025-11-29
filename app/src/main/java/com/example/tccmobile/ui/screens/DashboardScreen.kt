@@ -4,6 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,7 +19,13 @@ import com.example.tccmobile.R // Para acessar R.drawable.xxx (ícones)
 import com.example.tccmobile.ui.components.DashboardBibliotecario.CompletionCardData
 import com.example.tccmobile.ui.components.DashboardBibliotecario.DashboardHeader
 import com.example.tccmobile.ui.components.DashboardBibliotecario.MetricCardRow
+import com.example.tccmobile.ui.theme.AmareloClaro1
+import com.example.tccmobile.ui.theme.IconBackgroundGreen
+import com.example.tccmobile.ui.theme.IconBackgroundRed
+import com.example.tccmobile.ui.theme.IconBackgroundYellow
 import com.example.tccmobile.ui.theme.Pink40
+import com.example.tccmobile.ui.theme.Pink80
+import com.example.tccmobile.ui.theme.VermelhoTelha
 // Importando as cores necessárias
 import com.example.tccmobile.ui.theme.black
 import com.example.tccmobile.ui.theme.white
@@ -31,23 +41,30 @@ fun DashboardScreen() {
         CompletionCardData(
             mainTitle = "TCCs Corrigidos",
             detailText = "15 aprovados com sucesso",
-            iconResId = R.drawable.folha,
-            iconTint = green
+            // USANDO Material Icons (CheckCircle)
+            iconVector = Icons.Default.Assignment,
+            iconTint = green,
+            iconBackgroundColor = IconBackgroundGreen
         ),
         CompletionCardData(
             mainTitle = "Pendentes",
             detailText = "Em Análise",
-            iconResId = R.drawable.clock,
-            iconTint = yellow
+            // USANDO Material Icons (PendingActions)
+            iconVector = Icons.Default.AccessTime,
+            iconTint = AmareloClaro1,
+            iconBackgroundColor = IconBackgroundYellow // NOVO: Fundo
+
         ),
         CompletionCardData(
             mainTitle = "Concluídos",
-            detailText = "Aprovados com sucesso",
-            iconResId = R.drawable.uicon,
-            iconTint = Pink40
+            detailText = "aprovados com sucesso",
+            // USANDO Material Icons (Assignment)
+            iconVector = Icons.Default.CheckCircleOutline,
+            iconTint = VermelhoTelha,
+            iconBackgroundColor = IconBackgroundRed // NOVO: Fundo
+
         )
     )
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,16 +80,7 @@ fun DashboardScreen() {
         // Chamada do componente MetricCardRow com os dados mockados
         MetricCardRow(cardMetrics = sampleMetrics)
 
-        // 3. SEÇÃO DE OUTROS CONTEÚDOS (Placeholder)
-        Column(modifier = Modifier.padding(24.dp)) {
-            Text(
-                "Conteúdo do Dashboard",
-                color = black,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            // Placeholder para simular mais conteúdo na tela
-            Spacer(modifier = Modifier.height(400.dp))
-        }
+
     }
 }
 
