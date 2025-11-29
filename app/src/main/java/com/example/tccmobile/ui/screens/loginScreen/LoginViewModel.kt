@@ -27,7 +27,7 @@ class LoginViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val isAuth = authRepository.signInStudent(
+            val isAuth = authRepository.signIn(
                 registry = _uiState.value.matricula,
                 password = _uiState.value.senha
             )
