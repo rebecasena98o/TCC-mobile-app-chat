@@ -6,6 +6,8 @@ val DarkBlueBackground = Color(0xFF062452) // Fundo do BoxForm
 val PrimaryBlue = Color(0xFF0282EA)       // Botão "Entrar"
 val DarkBlueButton = Color(0xFF062452)    // Botão de toggle ativo
 val TextPrimary = Color.White
+
+val ClaroBlueBackground = Color(0xFFB8D1FF)
 val TextSecondary = Color(0xFFB0B0B0) // Placeholder/Helper
 
 val HeaderBackground = Color(0xFF003366)
@@ -37,7 +39,7 @@ val AmareloClaro1 = Color(0xFFFEE685)
 
 val AmareloClaro2 = Color(0xFFFEF3C6)
 
-val IconBackgroundGreen = Color(0xFFE1FFC2)
+val IconBackgroundGreen = Color(0xFFD2F3B0)
 
 val IconBackgroundYellow = Color(0xFFFFF5D0)
 
