@@ -7,23 +7,27 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.Alignment
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 // MODELO DE DADOS CENTRALIZADO: Esta é a única definição para evitar conflitos.
 data class CompletionCardData(
-    val mainTitle: String, // Título principal (ex: "15")
+    val mainTitle: String,
+    val quantidade: Int,// Título principal (ex: "15")
     val detailText: String, // Texto de detalhe (ex: "TCCs Corrigidos")
     val iconVector: ImageVector,
     val iconTint: Color,
-    val iconBackgroundColor: Color
+    val iconBackgroundColor: Color,
+    val incrementoMes: Int? = null // +12 opcional
 )
 
 
@@ -37,71 +41,105 @@ fun CompletionCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 100.dp),
-        shape = RoundedCornerShape(12.dp),
+                .height(120.dp)
+                .width(500.dp), //largura dos cards/icones grandões
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .height(120.dp)
+
         ) {
 
             Box(
                 modifier = Modifier
-                    .size(56.dp) // Tamanho maior para o Box de fundo
+                    .offset(y = 18.dp) // onde o icone deve ficar
                     .background(
-                        data.iconBackgroundColor,
-                        RoundedCornerShape(10.dp)
+                        color = data.iconBackgroundColor.copy(alpha = 0.25f),
+                        RoundedCornerShape(10.dp) //efeitos icones
                     ),
                 contentAlignment = Alignment.Center
             ) {
-
-                // Lado Esquerdo: Ícone
+                // Ícone
                 Icon(
                     imageVector = data.iconVector, // Usando o ImageVector
                     contentDescription = "Ícone de ${data.mainTitle}",
                     tint = data.iconTint,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(end = 1.dp)
+                    modifier = Modifier.padding(18.dp,18.dp) //fundo do icone
+
                 )
             }
 
-                // Espaçamento entre o Ícone e o Texto
-                Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
 
-                // 2. Lado Direito: Textos (Ocupa o espaço restante e se alinha à direita)
-                // ESTE É O IRMÃO DIRETO DO Box DENTRO DO ROW, AGORA FUNCIONA!
-                Column(
-                    modifier = Modifier.weight(
-                        1F,
-                        fill = true
-                    ), // CORRIGIDO! Agora o weight é usado corretamente pelo Row
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Center
+            Column(
+                modifier = Modifier.weight(
+                    1F,
+                    fill = true
+                ),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(16.dp) //espaço entre Título e o resto
+            )
+            {
+                // Título Principal
+                Text(
+                    text = data.mainTitle,
+                    color = Color.Black.copy(alpha = 0.85f),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
                 )
-                {
-                    // Título Principal (Ex: "15")
+
+                Row(
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    // QUANTIDADE ou NÚMERO
                     Text(
-                        text = data.mainTitle,
-                        color = Color.Black,
-                        fontSize = 26.sp,
+                        text = data.quantidade.toString(),
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
-                        maxLines = 1
+                        color = Color.Black,
+                        modifier = Modifier.padding(vertical = 8.dp) //altura da quantidade
                     )
 
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier
+                        .height(15.dp) //altura entre quantidade e +12
+                        .width(15.dp) //largura entre quantidade e +12
+
+                    )
+
+                    // INDICADOR DE MÊS (verde)
+                    if (data.incrementoMes != null) {
+                        Spacer(Modifier
+                            .height(10.dp)
+                            .width(8.dp)
+
+                        )
+                        Text(
+                            text = "+${data.incrementoMes} este mês",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF2ECC71),
+                            modifier = Modifier.height(25.dp)
+
+
+                        )
+                    }
+
+                    Spacer(Modifier
+                        .height(45.dp)
+                        .width(13.dp)
+                    )
 
                     // Texto de Detalhe (Ex: "TCCs Corrigidos")
                     Text(
                         text = data.detailText,
                         color = Color.Black.copy(alpha = 0.6f),
-                        fontSize = 11.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
                         maxLines = 1
                     )
@@ -109,3 +147,5 @@ fun CompletionCard(
             }
         }
     }
+}
+
