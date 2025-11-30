@@ -1,4 +1,4 @@
-package com.example.tccmobile.ui.screens
+package com.example.tccmobile.ui.screens.bibliodashscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,29 +8,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.CheckCircleOutline
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 
 // IMPORTS NECESSÁRIOS: Garante que os componentes e dados de outros arquivos sejam encontrados
-import com.example.tccmobile.R // Para acessar R.drawable.xxx (ícones)
 import com.example.tccmobile.ui.components.DashboardBibliotecario.CompletionCardData
 import com.example.tccmobile.ui.components.DashboardBibliotecario.DashboardHeader
 import com.example.tccmobile.ui.components.DashboardBibliotecario.MetricCardRow
-import com.example.tccmobile.ui.theme.AmareloClaro1
+import com.example.tccmobile.ui.theme.ClaroBlueBackground
+import com.example.tccmobile.ui.theme.DarkBlueBackground
 import com.example.tccmobile.ui.theme.IconBackgroundGreen
 import com.example.tccmobile.ui.theme.IconBackgroundRed
-import com.example.tccmobile.ui.theme.IconBackgroundYellow
-import com.example.tccmobile.ui.theme.Pink40
-import com.example.tccmobile.ui.theme.Pink80
 import com.example.tccmobile.ui.theme.VermelhoTelha
 // Importando as cores necessárias
-import com.example.tccmobile.ui.theme.black
 import com.example.tccmobile.ui.theme.white
 import com.example.tccmobile.ui.theme.green
-import com.example.tccmobile.ui.theme.yellow
 
 
 @Composable
@@ -40,28 +33,34 @@ fun DashboardScreen() {
     val sampleMetrics = listOf(
         CompletionCardData(
             mainTitle = "TCCs Corrigidos",
-            detailText = "15 aprovados com sucesso",
+            quantidade = 45,
+            detailText = "",
+            incrementoMes = 12,
             // USANDO Material Icons (CheckCircle)
             iconVector = Icons.Default.Assignment,
-            iconTint = green,
-            iconBackgroundColor = IconBackgroundGreen
+            iconTint = DarkBlueBackground,
+            iconBackgroundColor = ClaroBlueBackground
         ),
         CompletionCardData(
             mainTitle = "Pendentes",
+            quantidade = 8,
             detailText = "Em Análise",
+            incrementoMes = null,
             // USANDO Material Icons (PendingActions)
             iconVector = Icons.Default.AccessTime,
-            iconTint = AmareloClaro1,
-            iconBackgroundColor = IconBackgroundYellow // NOVO: Fundo
+            iconTint = VermelhoTelha,
+            iconBackgroundColor = IconBackgroundRed // NOVO: Fundo
 
         ),
         CompletionCardData(
             mainTitle = "Concluídos",
+            quantidade = 37,
             detailText = "aprovados com sucesso",
+            incrementoMes = null,
             // USANDO Material Icons (Assignment)
             iconVector = Icons.Default.CheckCircleOutline,
-            iconTint = VermelhoTelha,
-            iconBackgroundColor = IconBackgroundRed // NOVO: Fundo
+            iconTint = green,
+            iconBackgroundColor = IconBackgroundGreen // NOVO: Fundo
 
         )
     )
