@@ -21,15 +21,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tccmobile.helpers.formattedInstant
 import com.example.tccmobile.ui.theme.Blue
 import com.example.tccmobile.ui.theme.DarkBlue
 import com.example.tccmobile.ui.theme.LightBlue
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun MessageBox(
     message: String,
-    date: String,
+    date: Instant,
     isStudent: Boolean, //true = aluno, false = bibliotecária
     nameSubmitter: String? = null, //nome de quem mandou
     attachmentName: String? = null, //nome do arquivo anexo
@@ -97,7 +101,7 @@ fun MessageBox(
         }
 
         Text(//data
-            text = date,
+            text = formattedInstant(date),
             color = Color.Gray,
             fontSize = 11.sp,
             modifier = Modifier.padding(horizontal = 4.dp)
@@ -105,79 +109,36 @@ fun MessageBox(
     }
 }
 
-@Composable
-fun AttachmentBox(//caixinha com ícone e nome do arquivo
-    fileName: String,
-    backgroundColor: Color,
-    contentColor: Color,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
-            contentColor = contentColor
-        ),
-        elevation = ButtonDefaults.buttonElevation(0.dp, 0.dp, 0.dp), // Tira a sombra
-        contentPadding = PaddingValues(0.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Description, // ícone de folha de papel
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
 
-            Text(// nome do arquivo que corta com "..." se for muito grande
-                text = fileName,
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
-            )
-            Icon(
-                imageVector = Icons.Outlined.Download, // ícone de download na ponta
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun MessageDialogPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp) // espaço entre as mensagens
-    ) {
-
-        MessageBox(//aluno
-            message = "Olá, segue meu TCC para análise.",
-            date = "15/10/2024 às 14:35",
-            isStudent = true, // define que sou eu (azul escuro, direita)
-            attachmentName = "TCC_Joao_v1.pdf"
-        )
-
-        MessageBox(// biblio
-            message = "Olá João! Recebido. Vou analisar e te dou retorno em breve.",
-            date = "15/10/2024 às 14:40",
-            isStudent = false, // define que é ela (branco, esquerda)
-            nameSubmitter = "Bibliotecária"
-        )
-
-        MessageBox(//biblio
-            message = "Fiz algumas anotações, veja o anexo.",
-            date = "20/10/2024 às 10:00",
-            isStudent = false,
-            nameSubmitter = "Bibliotecária",
-            attachmentName = "Correcoes_v1.pdf"
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MessageDialogPreview() {
+//    Column(
+//        modifier = Modifier.padding(16.dp),
+//        verticalArrangement = Arrangement.spacedBy(16.dp) // espaço entre as mensagens
+//    ) {
+//
+//        MessageBox(//aluno
+//            message = "Olá, segue meu TCC para análise.",
+//            date = "15/10/2024 às 14:35",
+//            isStudent = true, // define que sou eu (azul escuro, direita)
+//            attachmentName = "TCC_Joao_v1.pdf"
+//        )
+//
+//        MessageBox(// biblio
+//            message = "Olá João! Recebido. Vou analisar e te dou retorno em breve.",
+//            date = "15/10/2024 às 14:40",
+//            isStudent = false, // define que é ela (branco, esquerda)
+//            nameSubmitter = "Bibliotecária"
+//        )
+//
+//        MessageBox(//biblio
+//            message = "Fiz algumas anotações, veja o anexo.",
+//            date = "20/10/2024 às 10:00",
+//            isStudent = false,
+//            nameSubmitter = "Bibliotecária",
+//            attachmentName = "Correcoes_v1.pdf"
+//        )
+//    }
+//}
