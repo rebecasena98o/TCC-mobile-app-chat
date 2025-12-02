@@ -12,23 +12,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-import com.example.tccmobile.ui.theme.green // Cores importadas do seu Color.kt
-import com.example.tccmobile.ui.theme.yellow // Cores importadas do seu Color.kt
-import com.example.tccmobile.ui.theme.Pink80 // Usando temporariamente para "Novos Envio"
+import com.example.tccmobile.ui.theme.green
+
 import com.example.tccmobile.ui.theme.DarkBlueBackground
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.PendingActions
+
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.CheckCircleOutline
-import com.example.tccmobile.R // Mantido
-import com.example.tccmobile.ui.theme.AmareloClaro1
+
 import com.example.tccmobile.ui.theme.ClaroBlueBackground
 import com.example.tccmobile.ui.theme.IconBackgroundGreen
 import com.example.tccmobile.ui.theme.IconBackgroundRed
-import com.example.tccmobile.ui.theme.IconBackgroundYellow
-import com.example.tccmobile.ui.theme.Pink40
+
 import com.example.tccmobile.ui.theme.VermelhoTelha
 
 /**
