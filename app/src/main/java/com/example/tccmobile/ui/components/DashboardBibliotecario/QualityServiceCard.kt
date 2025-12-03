@@ -142,7 +142,7 @@ fun QualityServiceCard(
                         )
                     }
 
-                    Spacer(Modifier.width(8.dp))
+                    Spacer(Modifier.width(20.dp))
 
                     // Texto de Detalhe (Ex: de 5.0 estrelas)
                     Text(
@@ -150,7 +150,7 @@ fun QualityServiceCard(
                         color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
-                        maxLines = 1,
+                        maxLines = 2,
                         modifier = Modifier.offset(y = 2.dp)
                     )
                 }
