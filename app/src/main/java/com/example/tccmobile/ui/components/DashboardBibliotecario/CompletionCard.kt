@@ -110,12 +110,8 @@ fun CompletionCard(
                         modifier = Modifier.padding(vertical = 8.dp) //altura da quantidade
                     )
 
-                    Spacer(
-                        Modifier
-                            .height(45.dp) //altura entre quantidade e +12
-                            .width(13.dp) //largura entre quantidade e +12
+                    Spacer(Modifier.width(20.dp))
 
-                    )
 
                     // Texto de Detalhe (Ex: "Em análise")
                     Text(
@@ -123,7 +119,7 @@ fun CompletionCard(
                         color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
-                        maxLines = 1
+                        maxLines = 2
                     )
 
                     // INDICADOR DE MÊS (verde)
