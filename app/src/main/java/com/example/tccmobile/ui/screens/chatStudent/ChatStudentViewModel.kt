@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tccmobile.data.entity.Message
 import com.example.tccmobile.data.repository.AuthRepository
 import com.example.tccmobile.data.repository.MessageRepository
+import com.example.tccmobile.data.repository.TicketRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +18,7 @@ import kotlin.time.Instant
 class ChatStudentViewModel(
     private val messageRepository: MessageRepository = MessageRepository(),
     private val authRepository: AuthRepository = AuthRepository(),
+    private val ticketRepository: TicketRepository = TicketRepository()
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ChatStudentState())
     val uiState = _uiState.asStateFlow()
@@ -94,9 +96,13 @@ class ChatStudentViewModel(
         viewModelScope.launch {
             setIsLoanding(true)
 
-            setTheme("Teste")
-            setCourse("curso teste")
-            setStatus("Aberto")
+            val ticket = ticketRepository.getTicket(ticketId)
+
+            if(ticket == null) return@launch
+
+            setTheme(ticket.subject)
+            setCourse(ticket.course)
+            setStatus(ticket.status)
 
             setMessagesList(messageRepository.listMessages(ticketId))
 
