@@ -81,10 +81,12 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.utils)
     implementation(libs.supabase.auth)
     implementation(libs.supabase.storage)
     implementation(libs.supabase.postgrest)
+    implementation(libs.supabase.realtime)
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.material.icons.extended)
