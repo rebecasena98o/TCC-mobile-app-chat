@@ -4,6 +4,8 @@ import android.icu.util.TimeZone
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tccmobile.data.entity.Message
+import com.example.tccmobile.data.repository.AuthRepository
+import com.example.tccmobile.data.repository.MessageRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,9 +14,28 @@ import kotlinx.coroutines.launch
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-class ChatStudentViewModel() : ViewModel() {
+class ChatStudentViewModel(
+    private val messageRepository: MessageRepository = MessageRepository(),
+    private val authRepository: AuthRepository = AuthRepository(),
+) : ViewModel() {
     private val _uiState = MutableStateFlow(ChatStudentState())
     val uiState = _uiState.asStateFlow()
+
+    fun init(channelId: Int){
+        viewModelScope.launch {
+            messageRepository.startListening(channelId){
+                insertNewMessage(it)
+            }
+        }
+    }
+
+    override fun onCleared() {
+        viewModelScope.launch {
+            super.onCleared()
+            messageRepository.clear()
+        }
+
+    }
 
     private fun setTheme(v: String) {
         _uiState.update { it.copy(theme = v) }
@@ -45,54 +66,40 @@ class ChatStudentViewModel() : ViewModel() {
     }
 
     @OptIn(ExperimentalTime::class)
-    fun sendMessage(){
-        if(_uiState.value.inputMessage.isEmpty()) return
+    fun sendMessage(ticketId: Int){
+        viewModelScope.launch {
+            val userId = authRepository.getUserInfo()?.id
+            if(_uiState.value.inputMessage.isEmpty() && userId == null) return@launch
 
-        setMessagesList(listOf(Message(
-            id = 3,
-            content = _uiState.value.inputMessage,
-            senderName = "teste",
-            ticketId = "123",
-            isStudent = true,
-            createdAt = Instant.parse("2025-11-29T04:07:25.365188+00")
-        )))
+            messageRepository.sendMessage(
+                content = _uiState.value.inputMessage,
+                ticketId = ticketId,
+                senderId = userId as String,
+            )
 
-        setInputMessage(" ")
+            setInputMessage(" ")
+        }
+    }
+
+    private fun insertNewMessage(id: Int){
+        viewModelScope.launch {
+            val newMessage = messageRepository.getNewMessage(id)
+            if(newMessage != null)
+                setMessagesList(listOf(newMessage))
+        }
     }
 
     @OptIn(ExperimentalTime::class)
-    fun fetchTicket(ticketId: String) {
+    fun fetchTicket(ticketId: Int) {
         viewModelScope.launch {
             setIsLoanding(true)
-
 
             setTheme("Teste")
             setCourse("curso teste")
             setStatus("Aberto")
 
-            setMessagesList(listOf(
-                Message(
-                    id = 1,
-                    content = "testando",
-                    senderName = "joao",
-                    ticketId = "123",
-                    isStudent = true,
-                    createdAt = Instant.parse("2025-11-29T04:07:25.365188+00"),
-                    fileName = "teste-1",
-                    fileSize = 11000,
-                    fileType = "docx",
-                ),
-                Message(
-                    id = 2,
-                    content = "testando",
-                    senderName = "joao",
-                    ticketId = "123",
-                    isStudent = false,
-                    createdAt = Instant.parse("2025-11-29T04:07:25.365188+00"),
-                )
-            ))
+            setMessagesList(messageRepository.listMessages(ticketId))
 
-            delay(1500)
             setIsLoanding(false)
         }
     }

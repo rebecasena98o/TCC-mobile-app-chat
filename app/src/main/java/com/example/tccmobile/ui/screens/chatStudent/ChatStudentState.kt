@@ -4,6 +4,7 @@ import android.net.Uri
 import com.example.tccmobile.data.entity.Message
 
 data class ChatStudentState(
+    val id: String = "",
     val theme: String = "",
     val course: String = "",
     val status: String = "",

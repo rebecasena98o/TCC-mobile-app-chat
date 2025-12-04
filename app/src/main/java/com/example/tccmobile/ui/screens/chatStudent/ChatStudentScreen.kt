@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,9 +38,17 @@ fun ChatStudentScreen(
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val listState = rememberLazyListState()
 
     LaunchedEffect(ticketId) {
-        viewModel.fetchTicket(ticketId)
+        viewModel.init(ticketId.toInt())
+        viewModel.fetchTicket(ticketId.toInt())
+    }
+
+    LaunchedEffect(uiState.messages.size) {
+        if(uiState.messages.isNotEmpty()){
+            listState.animateScrollToItem(index= uiState.messages.lastIndex)
+        }
     }
 
     if (uiState.isLoading) {
@@ -74,10 +83,12 @@ fun ChatStudentScreen(
 
 
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                 .weight(1f)
                 .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+
             ){
                 items(items= uiState.messages, key={ it.id }) { message ->
                     MessageBox(
@@ -97,7 +108,7 @@ fun ChatStudentScreen(
             ChatInputBar(
                 message = uiState.inputMessage,
                 onMessageChange = { viewModel.setInputMessage(it) },
-                onSendClick = { viewModel.sendMessage() },
+                onSendClick = { viewModel.sendMessage(ticketId.toInt()) },
                 onAttachClick = {}
             )
         }
