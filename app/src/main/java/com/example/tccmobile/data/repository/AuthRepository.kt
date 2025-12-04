@@ -7,16 +7,21 @@ import com.example.tccmobile.data.entity.Student
 import com.example.tccmobile.data.supabase.SupabaseClient.client
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.auth.user.UserInfo
 import io.github.jan.supabase.postgrest.postgrest
+import io.ktor.util.valuesOf
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlin.time.ExperimentalTime
 
 class AuthRepository {
-
     suspend fun signIn(registry: String, password: String): Boolean{
         return try {
+            if (client.auth.currentSessionOrNull() != null) {
+                Log.d("SUPABASE_DEBUG", "Sessão anterior encontrada, fazendo logout...")
+                client.auth.signOut()
+            }
 
             Log.d("SUPABASE_DEBUG", "registry: $registry")
 
@@ -24,7 +29,12 @@ class AuthRepository {
                 filter {
                     eq("registry", registry)
                 }
-            }.decodeSingle<UserDto>()
+            }.decodeSingleOrNull<UserDto>()
+
+            if (user == null) {
+                Log.e("SUPABASE_DEBUG", "Usuário não encontrado com registry: $registry")
+                return false
+            }
 
             val isStudent = client.postgrest.from("students").select {
                 filter {
@@ -87,4 +97,16 @@ class AuthRepository {
         }
     }
 
+    fun getIsStudent(): Boolean{
+        val session = client.auth.currentSessionOrNull()
+        val isStudent = session?.user?.userMetadata?.get("isStudent")
+
+        return isStudent != null
+    }
+
+    fun getUserInfo(): UserInfo? {
+        val session = client.auth.currentSessionOrNull()
+
+        return session?.user
+    }
 }

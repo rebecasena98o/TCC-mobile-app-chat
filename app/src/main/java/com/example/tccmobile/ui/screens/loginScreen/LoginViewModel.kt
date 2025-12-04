@@ -27,6 +27,13 @@ class LoginViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
+
+            if(_uiState.value.matricula.isEmpty() || _uiState.value.senha.isEmpty()){
+                _uiState.update { it.copy(isLoading = false, loginError = "Matrícula ou senha inválida.") }
+                return@launch
+            }
+
+
             val isAuth = authRepository.signIn(
                 registry = _uiState.value.matricula,
                 password = _uiState.value.senha
