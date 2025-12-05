@@ -1,29 +1,27 @@
 package com.example.tccmobile.ui.screens.chatStudent
 
-import android.icu.util.TimeZone
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tccmobile.data.entity.Message
 import com.example.tccmobile.data.repository.AuthRepository
 import com.example.tccmobile.data.repository.MessageRepository
 import com.example.tccmobile.data.repository.TicketRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
-class ChatStudentViewModel(
+open class ChatStudentViewModel(
     private val messageRepository: MessageRepository = MessageRepository(),
     private val authRepository: AuthRepository = AuthRepository(),
     private val ticketRepository: TicketRepository = TicketRepository()
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ChatStudentState())
+    protected val _uiState = MutableStateFlow(ChatStudentState())
     val uiState = _uiState.asStateFlow()
 
-    fun init(channelId: Int){
+    open fun init(channelId: Int){
         viewModelScope.launch {
             messageRepository.startListening(channelId){
                 insertNewMessage(it)
@@ -67,6 +65,24 @@ class ChatStudentViewModel(
         _uiState.update { it.copy(status = v) }
     }
 
+    fun setFileNameAndUri(name: String, uri: Uri){
+        _uiState.update {
+            it.copy(
+                fileName = name,
+                fileUri = uri
+            )
+        }
+    }
+
+    fun removeFile(){
+        _uiState.update {
+            it.copy(
+                fileName = "",
+                fileUri = null
+            )
+        }
+    }
+
     @OptIn(ExperimentalTime::class)
     fun sendMessage(ticketId: Int){
         viewModelScope.launch {
@@ -92,7 +108,7 @@ class ChatStudentViewModel(
     }
 
     @OptIn(ExperimentalTime::class)
-    fun fetchTicket(ticketId: Int) {
+    open fun fetchTicket(ticketId: Int) {
         viewModelScope.launch {
             setIsLoanding(true)
 

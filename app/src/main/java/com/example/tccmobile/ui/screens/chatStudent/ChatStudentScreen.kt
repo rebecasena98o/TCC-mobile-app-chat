@@ -1,9 +1,11 @@
 package com.example.tccmobile.ui.screens.chatStudent
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -17,9 +19,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tccmobile.helpers.HandlerFiles
 import com.example.tccmobile.ui.components.chat.ChatInputBar
 import com.example.tccmobile.ui.components.chat.HeaderStudentChat
 import com.example.tccmobile.ui.components.chat.MessageBox
@@ -39,6 +43,7 @@ fun ChatStudentScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
+    val context = LocalContext.current
 
     LaunchedEffect(ticketId) {
         viewModel.init(ticketId.toInt())
@@ -50,6 +55,20 @@ fun ChatStudentScreen(
             listState.animateScrollToItem(index= uiState.messages.lastIndex)
         }
     }
+
+    val tccFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri: Uri? ->
+            if (uri != null) {
+                HandlerFiles.onFileSelected(
+                    fileUri = uri,
+                    context= context,
+                    callbackError = { },
+                    callbackSuccess = { viewModel.setFileNameAndUri(name = it, uri= uri) }
+                )
+            }
+        }
+    )
 
     if (uiState.isLoading) {
         Box(
@@ -105,11 +124,24 @@ fun ChatStudentScreen(
             }
 
 
+
+
             ChatInputBar(
                 message = uiState.inputMessage,
+                fileName = uiState.fileName,
                 onMessageChange = { viewModel.setInputMessage(it) },
                 onSendClick = { viewModel.sendMessage(ticketId.toInt()) },
-                onAttachClick = {}
+                onAttachClick = {
+                    tccFileLauncher.launch(
+                        input= arrayOf(
+                            "application/msword",
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            "application/vnd.oasis.opendocument.text",
+                            "application/octet-stream"
+                        )
+                    )
+                },
+                onRemoveFile = { viewModel.removeFile() }
             )
         }
 
@@ -118,10 +150,77 @@ fun ChatStudentScreen(
 }
 
 
-@Preview
+// Mock ViewModel para Preview
+class MockChatStudentViewModel : ChatStudentViewModel() {
+    @OptIn(ExperimentalTime::class)
+    private val mockMessages = listOf(
+        com.example.tccmobile.data.entity.Message(
+            id = 1,
+            content = "Olá, preciso de ajuda com meu TCC sobre desenvolvimento mobile.",
+            senderName = "João Silva",
+            ticketId = "123",
+            createdAt = kotlin.time.Instant.fromEpochMilliseconds(System.currentTimeMillis() - 3600000),
+            isStudent = true,
+            fileName = null
+        ),
+        com.example.tccmobile.data.entity.Message(
+            id = 2,
+            content = "Claro! Vou analisar seu trabalho e dar um feedback detalhado.",
+            senderName = "Prof. Maria Santos",
+            ticketId = "123",
+            createdAt = kotlin.time.Instant.fromEpochMilliseconds(System.currentTimeMillis() - 1800000),
+            isStudent = false,
+            fileName = null
+        ),
+        com.example.tccmobile.data.entity.Message(
+            id = 3,
+            content = "Segue meu documento do TCC atualizado.",
+            senderName = "João Silva",
+            ticketId = "123",
+            createdAt = kotlin.time.Instant.fromEpochMilliseconds(System.currentTimeMillis() - 600000),
+            isStudent = true,
+            fileName = "TCC_Desenvolvimento_Mobile.docx"
+        ),
+        com.example.tccmobile.data.entity.Message(
+            id = 4,
+            content = "Recebi o documento. Vou revisar e retorno em breve.",
+            senderName = "Prof. Maria Santos",
+            ticketId = "123",
+            createdAt = kotlin.time.Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+            isStudent = false,
+            fileName = null
+        )
+    )
+
+    init {
+        _uiState.value = ChatStudentState(
+            id = "123",
+            theme = "Desenvolvimento de Aplicativo Mobile",
+            course = "Engenharia de Software",
+            status = "Em Andamento",
+            inputMessage = "",
+            messages = mockMessages,
+            isLoading = false,
+            chatError = null
+        )
+    }
+
+    override fun init(channelId: Int) {
+        // Mock - não faz nada no preview
+    }
+
+    override fun fetchTicket(ticketId: Int) {
+        // Mock - não faz nada no preview
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewChatStudentScreen(){
+    val mockViewModel = androidx.compose.runtime.remember { MockChatStudentViewModel() }
     ChatStudentScreen(
-        ticketId = "123"
-    ) { }
+        viewModel = mockViewModel,
+        ticketId = "123",
+        onBackClick = { }
+    )
 }
