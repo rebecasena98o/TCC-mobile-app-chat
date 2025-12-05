@@ -17,11 +17,7 @@ object SupabaseClient {
         supabaseUrl = BuildConfig.SUPABASE_URL,
         supabaseKey = BuildConfig.SUPABASE_KEY,
     ) {
-        install(Auth) {
-            flowType = FlowType.PKCE
-            scheme = "app"
-            host = "supabase.com"
-        }
+        install(Auth)
         install(Storage)
         install(Postgrest)
         install(Realtime)

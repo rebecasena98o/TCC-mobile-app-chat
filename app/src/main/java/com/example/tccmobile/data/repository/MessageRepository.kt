@@ -39,8 +39,8 @@ class MessageRepository {
 
         changeFlow.onEach {
             when(it) {
-                is PostgresAction.Delete -> println("Deleted: ${it.oldRecord}")
-                is PostgresAction.Select -> println("Selected: ${it.record}")
+                is PostgresAction.Delete -> Log.d("SUPABASE_DEBUG","Deleted: ${it.oldRecord}")
+                is PostgresAction.Select -> Log.d("SUPABASE_DEBUG","Selected: ${it.record}")
                 is PostgresAction.Insert -> {
                     val msg = it.record
                     val jsonString = Json.encodeToString(msg)
@@ -53,7 +53,7 @@ class MessageRepository {
                         callback(msgDto.id)
                     }
                  }
-                is PostgresAction.Update -> println("Updated: ${it.oldRecord} with ${it.record}")
+                is PostgresAction.Update -> Log.d("SUPABASE_DEBUG","Updated: ${it.oldRecord} with ${it.record}")
             }}.launchIn(scope)
 
         channel.subscribe()
@@ -91,8 +91,8 @@ class MessageRepository {
     }
 
     @OptIn(ExperimentalTime::class)
-    suspend fun sendMessage(content: String, ticketId: Int, senderId: String): Unit{
-        try {
+    suspend fun sendMessage(content: String, ticketId: Int, senderId: String): MessageDto?{
+        return try {
             val newMessage = MessageInsertDto(
                 content = content,
                 senderId = senderId,
@@ -100,11 +100,14 @@ class MessageRepository {
             )
 
             if(content.isEmpty())
-                return
+                return null
 
-            client.postgrest.from("messages").insert(newMessage)
+            client.postgrest.from("messages").insert(newMessage){
+                select()
+            }.decodeSingleOrNull<MessageDto>()
         }catch (e: Exception){
             Log.e("SUPABASE_DEBUG", "ERRO AO ENVIAR MENSAGEM", e)
+            null
         }
     }
 
