@@ -1,12 +1,31 @@
+import java.io.FileInputStream
+import java.util.Properties
+import kotlin.apply
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
+
+
+val localPropsFile = rootProject.file("local.properties")
+val localProps = Properties()
+if (localPropsFile.exists()) {
+    FileInputStream(localPropsFile).use { localProps.load(it) }
+}
+
+val supabaseUrl: String = localProps.getProperty("SUPABASE_URL") ?: ""
+val supabaseKey: String = localProps.getProperty("SUPABASE_KEY") ?: ""
 
 android {
     namespace = "com.example.tccmobile"
     compileSdk = 36
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.example.tccmobile"
@@ -16,7 +35,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
+        buildConfigField("String", "SUPABASE_KEY", "\"$supabaseKey\"")
     }
+
+
 
     buildTypes {
         release {
