@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tccmobile.ui.theme.green
 import com.example.tccmobile.ui.theme.incrementosgreen
+import com.example.tccmobile.ui.theme.yellow2
 
 
 data class QualityServiceCard(
@@ -118,7 +119,7 @@ fun QualityServiceCard(
                                 Icon(
                                     imageVector = if (index <= 3) Icons.Default.Star else Icons.Default.StarBorder,
                                     contentDescription = null,
-                                    tint = if (index <= 4) Color(0xFFFFC107) else Color.LightGray, // Amarelo para 4 estrelas
+                                    tint = if (index <= 4) yellow2 else Color.LightGray, // Amarelo para 4 estrelas
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -134,7 +135,7 @@ fun QualityServiceCard(
                                 .offset(y = (-4).dp) // Pequeno ajuste vertical
                         )
                         Spacer(Modifier.width(4.dp))
-                            Text(
+                        Text(
                             text = data.incrementoMes.toString(),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
