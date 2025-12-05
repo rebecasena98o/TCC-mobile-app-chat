@@ -60,5 +60,3 @@ fun SimpleHeaderDisplay() {
                 AppNavigation()
             }
         }
-    }
-}
