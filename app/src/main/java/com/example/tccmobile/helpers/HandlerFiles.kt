@@ -1,7 +1,9 @@
 package com.example.tccmobile.helpers
 
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import kotlinx.coroutines.flow.update
 
@@ -80,4 +82,34 @@ class HandlerFiles {
     fun getByteArray(uri: Uri, context: Context): ByteArray?{
         return context.contentResolver.openInputStream(uri)?.readBytes()
     }
+
+    fun saveFileToDownloads(
+        context: Context,
+        fileName: String,
+        mimeType: String,
+        fileBytes: ByteArray
+    ): Uri? {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+            put(MediaStore.Downloads.MIME_TYPE, mimeType)
+            put(MediaStore.Downloads.RELATIVE_PATH, "Download/")
+            put(MediaStore.Downloads.IS_PENDING, 1)
+        }
+
+        val resolver = context.contentResolver
+        val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+
+        if (uri != null) {
+            resolver.openOutputStream(uri).use { output ->
+                output?.write(fileBytes)
+            }
+
+            contentValues.clear()
+            contentValues.put(MediaStore.Downloads.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+        }
+
+        return uri
+    }
+
 }
