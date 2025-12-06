@@ -9,4 +9,5 @@ data class TicketInfoMin(
     val subject: String,
     val course: String,
     val status: String,
+    val createBy: String,
 )

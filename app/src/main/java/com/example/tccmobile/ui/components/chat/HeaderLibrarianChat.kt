@@ -40,7 +40,7 @@ fun HeaderLibrarianChat(
     title: String,
     subtitle: String,
     studentName: String,
-    studentId: String,
+    studentRegistry: String,
     studentEmail: String,
     badges: List<StatusBadgeModel>,
     onBackClick: () -> Unit = {},
@@ -121,7 +121,7 @@ fun HeaderLibrarianChat(
         Spacer(modifier = Modifier.height(16.dp))
 
         InfoRow(label = "Aluno:", value = studentName)
-        InfoRow(label = "Matrícula:", value = studentId)
+        InfoRow(label = "Matrícula:", value = studentRegistry)
         InfoRow(label = "E-mail:", value = studentEmail)
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -171,7 +171,7 @@ fun HeaderLibrarianChatPreview() {
         title = "Desenvolvimento de Sistema Web",
         subtitle = "Engenharia de Software",
         studentName = "João Silva",
-        studentId = "2021001234",
+        studentRegistry = "2021001234",
         studentEmail = "joao.silva@edu.unifor.br",
         badges = listOf(
             StatusBadgeModel("Aberto", LightBlue, DarkBlue),

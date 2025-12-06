@@ -1,6 +1,12 @@
 package com.example.tccmobile.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,6 +18,9 @@ import com.example.tccmobile.ui.screens.registerScreen.RegisterScreen
 import com.example.tccmobile.ui.screens.newTicketScreen.NewTicketScreen
 import com.example.tccmobile.data.supabase.SupabaseClient.client
 import io.github.jan.supabase.auth.auth
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.jsonPrimitive
+import kotlin.text.get
 
 @Composable
 fun AppNavigation() {
@@ -61,17 +70,20 @@ fun AppNavigation() {
             ))
         { entry ->
             val id = entry.arguments?.getString("id")
+            var isStudent by remember { mutableStateOf<Boolean?>(null) }
 
-
-            val session = client.auth.currentSessionOrNull()
-            val isStudent = session?.user?.userMetadata?.get("isStudent")
-
+            LaunchedEffect(Unit) {
+                val session = client.auth.currentSessionOrNull()
+                isStudent = session?.user?.userMetadata?.get("isStudent")?.jsonPrimitive?.boolean
+                Log.d("AUTH_LOG", "isStudent atualizado: $isStudent")
+            }
 
             if(!id.isNullOrEmpty() && isStudent != null){
                 ChatStudentScreen(
                     ticketId = id,
+                    isStudent = isStudent!!,
                     onBackClick = {
-                        navController.popBackStack()
+                        navController.navigate(Routes.LOGIN)
                     }
                 )
             }

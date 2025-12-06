@@ -25,6 +25,7 @@ class TicketRepository {
                 subject = ticket.subject,
                 course = ticket.course,
                 status = ticket.status,
+                createBy = ticket.createBy
             )
         }catch (e: Exception){
             Log.e("SUPABASE_DEBUG", "Erro ao tentar consultar ticket com id = $ticketId. Erro: $e")

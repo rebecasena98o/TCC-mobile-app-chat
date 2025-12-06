@@ -2,6 +2,7 @@ package com.example.tccmobile.ui.screens.chatStudent
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tccmobile.data.entity.Message
 import com.example.tccmobile.ui.components.chat.ChatInputBar
+import com.example.tccmobile.ui.components.chat.HeaderLibrarianChat
 import com.example.tccmobile.ui.components.chat.HeaderStudentChat
 import com.example.tccmobile.ui.components.chat.MessageBox
 import com.example.tccmobile.ui.components.utils.StatusBadgeModel
@@ -41,6 +43,7 @@ import kotlin.time.Instant
 @Composable
 fun ChatStudentScreen(
     viewModel: ChatStudentViewModel = viewModel(),
+    isStudent: Boolean,
     ticketId: String,
     onBackClick: () -> Unit
 ) {
@@ -48,9 +51,9 @@ fun ChatStudentScreen(
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
-    LaunchedEffect(ticketId) {
+    LaunchedEffect(ticketId, isStudent) {
         viewModel.init(ticketId.toInt(), context)
-        viewModel.fetchTicket(ticketId.toInt())
+        viewModel.fetchTicket(ticketId.toInt(), isStudent)
     }
 
     LaunchedEffect(uiState.messages.size) {
@@ -87,19 +90,45 @@ fun ChatStudentScreen(
         Column(
             modifier= Modifier.fillMaxSize()
         ){
-            HeaderStudentChat(
-                ticketId = ticketId,
-                title = uiState.theme,
-                subtitle = uiState.course,
-                badges = listOf(
-                    StatusBadgeModel(
-                        text = uiState.status,
-                        backgroundColor = SuperLightOrange,
-                        textColor = Orange
-                    )
-                ),
-                onBackClick = onBackClick
-            )
+
+            if(isStudent){
+                HeaderStudentChat(
+                    ticketId = ticketId,
+                    title = uiState.theme,
+                    subtitle = uiState.course,
+                    badges = listOf(
+                        StatusBadgeModel(
+                            text = uiState.status,
+                            backgroundColor = SuperLightOrange,
+                            textColor = Orange
+                        )
+                    ),
+                    onBackClick = {
+                        onBackClick()
+                        viewModel.exit()
+                    }
+                )
+            }else{
+                HeaderLibrarianChat(
+                    ticketId = ticketId,
+                    title = uiState.theme,
+                    subtitle = uiState.course,
+                    studentName = uiState.author,
+                    studentRegistry = uiState.registry,
+                    studentEmail = uiState.email,
+                    badges = listOf(
+                        StatusBadgeModel(
+                            text = uiState.status,
+                            backgroundColor = SuperLightOrange,
+                            textColor = Orange
+                        )
+                    ),
+                    onBackClick = {
+                        onBackClick()
+                        viewModel.exit()
+                    }
+                )
+            }
 
 
             LazyColumn(
@@ -221,7 +250,7 @@ class MockChatStudentViewModel : ChatStudentViewModel() {
         // Mock - não faz nada no preview
     }
 
-    override fun fetchTicket(ticketId: Int) {
+    override fun fetchTicket(ticketId: Int, isStudent: Boolean) {
         // Mock - não faz nada no preview
     }
 }
@@ -233,6 +262,7 @@ fun PreviewChatStudentScreen(){
     ChatStudentScreen(
         viewModel = mockViewModel,
         ticketId = "123",
+        isStudent = true,
         onBackClick = { }
     )
 }
