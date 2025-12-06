@@ -1,15 +1,12 @@
 package com.example.tccmobile.ui.screens.studentTicketsScreen
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Schedule
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.example.tccmobile.ui.theme.*
 
 class StudentTicketsViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(DashboardState())
+    private val _uiState = MutableStateFlow(StudantsTicketsState())
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -64,6 +61,6 @@ class StudentTicketsViewModel : ViewModel() {
 
         )
 
-        _uiState.value = DashboardState(tickets = listaTickets)
+        _uiState.value = StudantsTicketsState(tickets = listaTickets)
     }
 }

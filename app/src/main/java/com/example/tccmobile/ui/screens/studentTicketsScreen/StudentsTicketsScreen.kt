@@ -6,8 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,7 +27,7 @@ import com.example.tccmobile.ui.theme.AzulLetra
 import com.example.tccmobile.ui.theme.Gray
 
 @Composable
-fun DashboardTicketsScreen(
+fun StudentsTicketsScreen(
     viewModel: StudentTicketsViewModel = viewModel(),
     navigateBarItems: List<BottomNavItem>,
     currentRoute: String,
@@ -43,13 +41,11 @@ fun DashboardTicketsScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        // 1. Header Compartilhado
         AppHeader(
             title = "Painel de Envio",
             subtitle = "Crie um novo ticket para iniciar análise"
         )
 
-        // 2. Conteúdo Central (Lista)
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -95,13 +91,11 @@ fun DashboardTicketsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Lista de Tickets
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
                 items(uiState.tickets) { ticket ->
-                    // showStudentInfo = false, pois aqui é o painel do próprio aluno
                     TicketCard(
                         ticket = ticket,
                         showStudentInfo = false,
@@ -110,12 +104,6 @@ fun DashboardTicketsScreen(
                 }
             }
         }
-
-//        3. Bottom Bar Compartilhada
-//        AppBottomBar(
-//            currentRoute = Routes.HOME, // Indica que estamos na Home
-//            onNavigate = onNavigate
-//        )
         BottomNavigationBar(
             items = navigateBarItems,
             currentRoute = currentRoute,
