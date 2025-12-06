@@ -108,7 +108,7 @@ open class ChatStudentViewModel(
     fun sendMessage(ticketId: Int, context: Context){
         viewModelScope.launch {
             val userId = authRepository.getUserInfo()?.id
-            if(_uiState.value.inputMessage.isEmpty() && userId == null) return@launch
+            if(_uiState.value.inputMessage.isEmpty() || _uiState.value.inputMessage.isBlank() || userId == null) return@launch
 
             val message = messageRepository.sendMessage(
                 content = _uiState.value.inputMessage,

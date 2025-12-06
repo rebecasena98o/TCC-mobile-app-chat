@@ -14,6 +14,6 @@ data class Message @OptIn(ExperimentalTime::class) constructor(
     var fileUrl: String? = null,
     var fileName: String? = null,
     var fileSize: Long? = null,
-    var fileType: String? = null,
+    var fileType: String? = null
 
-    )
+)
