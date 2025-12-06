@@ -28,8 +28,8 @@ import com.example.tccmobile.ui.components.utils.StatusBadge
 import com.example.tccmobile.ui.components.utils.StatusBadgeModel
 import com.example.tccmobile.ui.theme.DarkBlue
 import com.example.tccmobile.ui.theme.LightBlue
-import com.example.tccmobile.ui.theme.Orange
-import com.example.tccmobile.ui.theme.SuperLightOrange
+import com.example.tccmobile.ui.theme.StatusContainerPendente
+import com.example.tccmobile.ui.theme.StatusTextPendente
 import com.example.tccmobile.ui.theme.White
 
 @Composable
@@ -129,8 +129,7 @@ fun HeaderStudentChatPreview() {
         title = "Desenvolvimento de Sistema Web",
         subtitle = "Engenharia de Software",
         badges = listOf(
-            StatusBadgeModel("Aberto", LightBlue, DarkBlue),
-            StatusBadgeModel("Pendente", SuperLightOrange, Orange),
+            StatusBadgeModel("Pendente", StatusContainerPendente, StatusTextPendente),
             StatusBadgeModel("teste", Color.Red, Color.White)
         )
     )
