@@ -1,6 +1,9 @@
 package com.example.tccmobile.navigation
 
 import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,12 +24,49 @@ import io.github.jan.supabase.auth.auth
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.text.get
+import com.example.tccmobile.ui.components.utils.BottomNavItem
+import com.example.tccmobile.ui.components.utils.BottomNavigationBar
+import com.example.tccmobile.ui.screens.studentTicketsScreen.DashboardTicketsScreen
 
+//@Composable
+//fun AppNavigation() {
+//    val navController = rememberNavController()
+//
+//    NavHost(navController = navController, startDestination = Routes.LOGIN) {
+//        composable(Routes.LOGIN) {
+//            LoginScreen(
+//                onNavigateToRegister = {
+//                    navController.navigate(Routes.REGISTER)
+//                },
+//                onLoginSuccess = {
+//                    navController.navigate(Routes.HOME) {
+//                        popUpTo(Routes.LOGIN) { inclusive = true }
+//                    }
+//                }
+//            )
+//        }
+//        composable(Routes.REGISTER) {
+//            RegisterScreen(
+//                onNavigateToLogin = {
+//                    navController.popBackStack()
+//                },
+//                onRegisterSuccess = {
+//                    navController.popBackStack()
+//                }
+//            )
+//        }
+//        // composable(Routes.HOME) { /* ...Sua tela principal... */ }
+//    }
+//}
+
+
+// IR DIRETO PARA A TELA DOS TICKETS (SÓ DESCOMENTAR O QUE ESTÁ EMBAIXO E COMENTAR ACIMA) PARA TESTAR
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Routes.LOGIN) {
+    NavHost(navController = navController, startDestination = Routes.HOME) {
+
         composable(Routes.LOGIN) {
             LoginScreen(
                 onNavigateToRegister = {
@@ -39,6 +79,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.REGISTER) {
             RegisterScreen(
                 onNavigateToLogin = {
@@ -49,7 +90,8 @@ fun AppNavigation() {
                 }
             )
         }
-
+        
+        
         //Precisa ser implementado sua rota correta quando o dashboard for criado
         composable(Routes.NEW_TICKET){
             NewTicketScreen(
@@ -62,7 +104,8 @@ fun AppNavigation() {
                 }
             )
         }
-
+        
+        
         composable(
             route = Routes.TICKET,
             arguments = listOf(
@@ -88,5 +131,33 @@ fun AppNavigation() {
                 )
             }
         }
-    }
+
+
+
+        composable(Routes.HOME) {
+            DashboardTicketsScreen (
+                navigateBarItems = listOf(
+                    BottomNavItem(
+                        label= "Meus Envios",
+                        icon= Icons.Outlined.Description,
+                        route= Routes.HOME,
+                        onClick= { route ->
+                            navController.navigate(route)
+                        }
+                    ),
+                    BottomNavItem(
+                        label= "Perfil",
+                        icon= Icons.Outlined.Person,
+                        route= Routes.PROFILE,
+                        onClick= { route ->
+                            navController.navigate(route)
+                        }
+                    )
+                ),
+                currentRoute = Routes.HOME,
+                onTicketClick = { ticketId ->
+                    println("Cliquei no ticket: $ticketId")
+                }
+            )
+        }
 }

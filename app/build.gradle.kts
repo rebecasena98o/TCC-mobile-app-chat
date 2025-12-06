@@ -89,8 +89,6 @@ dependencies {
     implementation(libs.supabase.realtime)
     implementation(libs.kotlinx.serialization.json)
 
-    implementation(libs.androidx.material.icons.extended)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
