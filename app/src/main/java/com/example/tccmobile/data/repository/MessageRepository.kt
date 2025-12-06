@@ -11,6 +11,7 @@ import com.example.tccmobile.data.supabase.SupabaseClient.client
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.rpc
 import io.github.jan.supabase.realtime.PostgresAction
+import io.github.jan.supabase.realtime.RealtimeChannel
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
 import io.github.jan.supabase.realtime.realtime
@@ -27,13 +28,13 @@ class MessageRepository {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var activeChannelId: Int? = null
-
+    private var currentChannel: RealtimeChannel? = null
 
     suspend fun startListening(channelId: Int, callback: (id: Int) -> Unit){
         activeChannelId = channelId
-        val channel = client.realtime.channel("chat-$channelId")
+        currentChannel = client.realtime.channel("chat-$channelId")
 
-        val changeFlow = channel.postgresChangeFlow<PostgresAction>(schema = "public"){
+        val changeFlow = currentChannel!!.postgresChangeFlow<PostgresAction>(schema = "public"){
             table = "messages"
         }
 
@@ -56,14 +57,19 @@ class MessageRepository {
                 is PostgresAction.Update -> Log.d("SUPABASE_DEBUG","Updated: ${it.oldRecord} with ${it.record}")
             }}.launchIn(scope)
 
-        channel.subscribe()
+        currentChannel!!.subscribe()
     }
 
     suspend fun clear(){
-        activeChannelId.let {
-            val channel = client.channel(it.toString())
-            channel.unsubscribe()
+        currentChannel?.let { channel ->
+            try {
+                channel.unsubscribe()
+            } catch (e: Exception) {
+                Log.e("MessageRepository", "Erro ao desinscrever canal", e)
+            }
         }
+        currentChannel = null
+        activeChannelId = null
         scope.cancel()
     }
 
