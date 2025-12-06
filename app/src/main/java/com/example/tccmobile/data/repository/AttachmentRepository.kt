@@ -66,5 +66,14 @@ class AttachmentRepository {
         }
     }
 
+    suspend fun downloadAttach(path: String): ByteArray?{
+        return try {
+            val bucket = client.storage.from("docs")
+            bucket.downloadAuthenticated(path)
+        }catch (e: Exception){
+            Log.e("SUPABASE_DEBUG", "Erro ao baixar arquivo $e")
+            null
+        }
+    }
 
 }
