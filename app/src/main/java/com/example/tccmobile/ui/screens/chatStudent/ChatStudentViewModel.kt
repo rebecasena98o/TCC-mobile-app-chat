@@ -11,6 +11,7 @@ import com.example.tccmobile.data.repository.AttachmentRepository
 import com.example.tccmobile.data.repository.AuthRepository
 import com.example.tccmobile.data.repository.MessageRepository
 import com.example.tccmobile.data.repository.TicketRepository
+import com.example.tccmobile.data.repository.UserRepository
 import com.example.tccmobile.helpers.HandlerFiles
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ open class ChatStudentViewModel(
     private val messageRepository: MessageRepository = MessageRepository(),
     private val authRepository: AuthRepository = AuthRepository(),
     private val ticketRepository: TicketRepository = TicketRepository(),
+    private val userRepository: UserRepository = UserRepository(),
     private val attachRepository: AttachmentRepository = AttachmentRepository(),
     private val handlerFile: HandlerFiles = HandlerFiles()
 ) : ViewModel() {
@@ -46,6 +48,18 @@ open class ChatStudentViewModel(
 
     }
 
+    fun resetState() {
+        _uiState.value = ChatStudentState()
+    }
+
+    fun exit(){
+        viewModelScope.launch {
+            messageRepository.clear()
+            authRepository.signOut()
+            resetState()
+        }
+    }
+
     private fun setTheme(v: String) {
         _uiState.update { it.copy(theme = v) }
     }
@@ -53,6 +67,19 @@ open class ChatStudentViewModel(
     private fun setCourse(v: String){
         _uiState.update {  it.copy(course = v) }
     }
+
+    private fun setEmail(v: String) {
+        _uiState.update { it.copy(email = v) }
+    }
+
+    private fun setRegistry(v: String){
+        _uiState.update {  it.copy(registry = v) }
+    }
+
+    private fun setAuthor(v: String){
+        _uiState.update {  it.copy(author = v) }
+    }
+
 
     private fun setIsLoading(v: Boolean){
         _uiState.update { it.copy(isLoading = v) }
@@ -207,7 +234,7 @@ open class ChatStudentViewModel(
     }
 
     @OptIn(ExperimentalTime::class)
-    open fun fetchTicket(ticketId: Int) {
+    open fun fetchTicket(ticketId: Int, isStudent: Boolean) {
         viewModelScope.launch {
             setIsLoading(true)
 
@@ -216,6 +243,15 @@ open class ChatStudentViewModel(
             setTheme(ticket.subject)
             setCourse(ticket.course)
             setStatus(ticket.status)
+
+            if(!isStudent){
+                val user = userRepository.getStudentById(ticket.createBy) ?: return@launch
+
+                Log.d("SUPABASE_DEBUG", user.toString())
+                setEmail(user.email)
+                setAuthor(user.name)
+                setRegistry(user.registry)
+            }
 
             authRepository.getUserInfo()?.id?.let { userId ->
                 setMessagesList(messageRepository.listMessages(ticketId, userId))
