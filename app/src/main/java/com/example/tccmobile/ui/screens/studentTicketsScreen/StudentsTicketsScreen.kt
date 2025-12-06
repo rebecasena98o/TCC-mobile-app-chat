@@ -6,8 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,38 +17,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tccmobile.navigation.Routes
-import com.example.tccmobile.ui.theme.BackgroundPage
-import com.example.tccmobile.ui.theme.HeaderBlue
-import com.example.tccmobile.ui.theme.TextGray
+import com.example.tccmobile.ui.theme.BackgroundGray
 import com.example.tccmobile.ui.components.utils.AppHeader
-import com.example.tccmobile.ui.components.utils.AppBottomBar
 import com.example.tccmobile.ui.components.utils.BottomNavItem
 import com.example.tccmobile.ui.components.utils.BottomNavigationBar
 import com.example.tccmobile.ui.components.utils.ButtonForm
 import com.example.tccmobile.ui.components.utils.TicketCard
+import com.example.tccmobile.ui.theme.AzulLetra
+import com.example.tccmobile.ui.theme.Gray
 
 @Composable
-fun DashboardTicketsScreen(
-    viewModel: DashboardViewModel = viewModel(),
+fun StudentsTicketsScreen(
+    viewModel: StudentTicketsViewModel = viewModel(),
     navigateBarItems: List<BottomNavItem>,
     currentRoute: String,
-    onTicketClick: (String) -> Unit
+    onTicketClick: (String) -> Unit,
+    onClickNew: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundPage)
+            .background(BackgroundGray)
     ) {
-        // 1. Header Compartilhado
         AppHeader(
             title = "Painel de Envio",
             subtitle = "Crie um novo ticket para iniciar análise"
         )
 
-        // 2. Conteúdo Central (Lista)
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -66,20 +61,20 @@ fun DashboardTicketsScreen(
                 Column {
                     Text(
                         text = "Meus Envios",
-                        color = HeaderBlue,
+                        color = AzulLetra,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "Acompanhe seus tickets",
-                        color = TextGray,
+                        color = Gray,
                         fontSize = 14.sp
                     )
                 }
 
                 ButtonForm(
                     text = "Novo",
-                    backgroundColor = HeaderBlue,
+                    backgroundColor = AzulLetra,
                     contentColor = Color.White,
                     cornerRadius = 16,
                     icon = {
@@ -90,19 +85,17 @@ fun DashboardTicketsScreen(
                             modifier = Modifier.size(18.dp)
                         )
                     },
-                    onClick = { /* Ação Novo Ticket */ }
+                    onClick = { onClickNew() }
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Lista de Tickets
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
                 items(uiState.tickets) { ticket ->
-                    // showStudentInfo = false, pois aqui é o painel do próprio aluno
                     TicketCard(
                         ticket = ticket,
                         showStudentInfo = false,
@@ -111,12 +104,6 @@ fun DashboardTicketsScreen(
                 }
             }
         }
-
-//        3. Bottom Bar Compartilhada
-//        AppBottomBar(
-//            currentRoute = Routes.HOME, // Indica que estamos na Home
-//            onNavigate = onNavigate
-//        )
         BottomNavigationBar(
             items = navigateBarItems,
             currentRoute = currentRoute,

@@ -1,15 +1,12 @@
 package com.example.tccmobile.ui.screens.studentTicketsScreen
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Schedule
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.example.tccmobile.ui.theme.*
 
-class DashboardViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(DashboardState())
+class StudentTicketsViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(StudantsTicketsState())
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -17,31 +14,17 @@ class DashboardViewModel : ViewModel() {
     }
 
     private fun carregarTicketsMock() {
-        val tagAnalisado = TicketTagStatus(
-            label = "Analisado",
-            containerColor = StatusAnalisadoBg,
-            contentColor = StatusAnalisadoText,
-            icon = Icons.Outlined.Description
-        )
-
         val tagAvaliado = TicketTagStatus(
             label = "Avaliado",
-            containerColor = StatusAvaliadoBg,
-            contentColor = StatusAvaliadoText,
+            containerColor = StatusContainerAvaliado,
+            contentColor = StatusTextAvaliado,
             icon = null
-        )
-
-        val tagAberto = TicketTagStatus(
-            label = "Aberto",
-            containerColor = StatusAbertoBg,
-            contentColor = StatusAbertoText,
-            icon = Icons.Outlined.Schedule
         )
 
         val tagPendente = TicketTagStatus(
             label = "Pendente",
-            containerColor = StatusPendenteBg,
-            contentColor = StatusPendenteText,
+            containerColor = StatusContainerPendente,
+            contentColor = StatusTextPendente,
             icon = null,
         )
 
@@ -54,7 +37,7 @@ class DashboardViewModel : ViewModel() {
                 dataAbertura = "15/10/2024",
                 dataAtualizacao = "20/10/2024",
                 notificacoes = 1,
-                tags = listOf(tagAnalisado, tagAvaliado)
+                tags = listOf(tagAvaliado, tagPendente)
                 // nomeAluno e atribuidoPara são nulos pois é a visão do próprio aluno
             ),
             Ticket(
@@ -64,7 +47,7 @@ class DashboardViewModel : ViewModel() {
                 dataAbertura = "01/11/2024",
                 dataAtualizacao = "05/11/2024",
                 notificacoes = 0,
-                tags = listOf(tagAberto, tagPendente)
+                tags = listOf(tagAvaliado, tagPendente)
             ),
             Ticket(
                 id = "3",
@@ -73,11 +56,11 @@ class DashboardViewModel : ViewModel() {
                 dataAbertura = "01/11/2024",
                 dataAtualizacao = "05/11/2024",
                 notificacoes = 1,
-                tags = listOf(tagAberto, tagPendente)
+                tags = listOf(tagAvaliado, tagPendente)
             )
 
         )
 
-        _uiState.value = DashboardState(tickets = listaTickets)
+        _uiState.value = StudantsTicketsState(tickets = listaTickets)
     }
 }

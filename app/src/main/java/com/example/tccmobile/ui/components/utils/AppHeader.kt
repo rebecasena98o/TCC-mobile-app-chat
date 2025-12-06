@@ -15,9 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tccmobile.ui.theme.HeaderBlue
-import com.example.tccmobile.ui.theme.TextHeaderSubtitle
+import com.example.tccmobile.ui.theme.AzulSuperClaro
 import com.example.tccmobile.ui.screens.studentTicketsScreen.TicketTagStatus
+import com.example.tccmobile.ui.theme.AzulLetra
 
 @Composable
 fun AppHeader(
@@ -31,7 +31,7 @@ fun AppHeader(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(HeaderBlue)
+            .background(AzulLetra)
             .padding(top = 32.dp, bottom = 24.dp, start = 16.dp, end = 24.dp)
     ) {
         if (showBackButton || actionContent != null) {
@@ -79,7 +79,7 @@ fun AppHeader(
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = subtitle,
-                    color = TextHeaderSubtitle,
+                    color = AzulSuperClaro,
                     fontSize = 14.sp
                 )
             }
