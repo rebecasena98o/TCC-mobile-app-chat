@@ -116,9 +116,21 @@ fun ChatStudentScreen(
                         isAttachLoading = uiState.isAttachLoading,
                         nameSubmitter = message.senderName,
                         date = message.createdAt,
-                        isStudent = message.isStudent,
+                        isSent = message.isSent,
                         attachmentName = message.fileName,
                         onAttachmentClick = {
+                            val url = message.fileUrl
+                            val name = message.fileName
+                            val type = message.fileType
+
+                            if (url != null && name != null && type != null) {
+                                viewModel.downloadAttach(
+                                    path = url,
+                                    fileName = name,
+                                    mimeType = type,
+                                    context = context
+                                )
+                            }
 
                         }
                     )
@@ -160,7 +172,7 @@ class MockChatStudentViewModel : ChatStudentViewModel() {
             senderName = "João Silva",
             ticketId = "123",
             createdAt = Instant.fromEpochMilliseconds(System.currentTimeMillis() - 3600000),
-            isStudent = true,
+            isSent = true,
             fileName = null
         ),
         Message(
@@ -169,7 +181,7 @@ class MockChatStudentViewModel : ChatStudentViewModel() {
             senderName = "Prof. Maria Santos",
             ticketId = "123",
             createdAt = Instant.fromEpochMilliseconds(System.currentTimeMillis() - 1800000),
-            isStudent = false,
+            isSent = false,
             fileName = null
         ),
         Message(
@@ -178,7 +190,7 @@ class MockChatStudentViewModel : ChatStudentViewModel() {
             senderName = "João Silva",
             ticketId = "123",
             createdAt = Instant.fromEpochMilliseconds(System.currentTimeMillis() - 600000),
-            isStudent = true,
+            isSent = true,
             fileName = "TCC_Desenvolvimento_Mobile.docx"
         ),
         Message(
@@ -187,7 +199,7 @@ class MockChatStudentViewModel : ChatStudentViewModel() {
             senderName = "Prof. Maria Santos",
             ticketId = "123",
             createdAt = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
-            isStudent = false,
+            isSent = false,
             fileName = null
         )
     )

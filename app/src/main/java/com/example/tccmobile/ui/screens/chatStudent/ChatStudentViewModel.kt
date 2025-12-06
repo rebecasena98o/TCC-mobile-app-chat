@@ -3,6 +3,7 @@ package com.example.tccmobile.ui.screens.chatStudent
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tccmobile.data.entity.Message
@@ -11,10 +12,12 @@ import com.example.tccmobile.data.repository.AuthRepository
 import com.example.tccmobile.data.repository.MessageRepository
 import com.example.tccmobile.data.repository.TicketRepository
 import com.example.tccmobile.helpers.HandlerFiles
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.ExperimentalTime
 
 open class ChatStudentViewModel(
@@ -31,7 +34,6 @@ open class ChatStudentViewModel(
         viewModelScope.launch {
             messageRepository.startListening(channelId){
                 insertNewMessage(id = it)
-                uploadAttachment(id = it, context)
             }
         }
     }
@@ -137,6 +139,8 @@ open class ChatStudentViewModel(
                         messageId = message.id,
                     )
 
+                    uploadAttachment(messageId = message.id, context)
+
                     if(!result){
 //                        TODO() Mensagem de Erro e Funcao para cancelar a mensagem enviada sem anexo
                     }
@@ -150,30 +154,21 @@ open class ChatStudentViewModel(
 
     private fun insertNewMessage(id: Int){
         viewModelScope.launch {
-            val newMessage = messageRepository.getNewMessage(id)
+            authRepository.getUserInfo()?.id?.let { userId ->
+                val newMessage = messageRepository.getNewMessage(id, userId) ?: return@launch
 
-            if(newMessage == null) return@launch
-
-            val attach = attachRepository.getAttachmentByMessageId(newMessage.id)
-
-            if(attach != null){
-                newMessage.fileUrl = attach.fileUrl
-                newMessage.fileName = attach.fileName
-                newMessage.fileSize = attach.fileSize
-                newMessage.fileType = attach.fileType
+                Log.d("DEBUG_SUPABASE", "message: $newMessage")
+                setMessagesList(listOf(newMessage))
             }
-
-            Log.d("DEBUG_SUPABASE", "attach: $attach\n message: $newMessage")
-            setMessagesList(listOf(newMessage))
         }
     }
 
-    private fun uploadAttachment(id: Int, context: Context){
+    private fun uploadAttachment(messageId: Int, context: Context){
         viewModelScope.launch {
             setIsAttachLoading(true)
 
             _uiState.value.fileUri?.let { uri ->
-                val attach = attachRepository.getAttachmentByMessageId(id)
+                val attach = attachRepository.getAttachmentByMessageId(messageId)
 
                 val byte = handlerFile.getByteArray(
                     uri = uri,
@@ -187,22 +182,45 @@ open class ChatStudentViewModel(
         }
     }
 
+
+    fun downloadAttach(path: String, fileName: String, mimeType: String, context: Context){
+        viewModelScope.launch {
+            try {
+                val bytes = attachRepository.downloadAttach(path) ?: return@launch
+                handlerFile.saveFileToDownloads(
+                    context = context,
+                    fileName = fileName,
+                    mimeType = mimeType,
+                    fileBytes = bytes,
+                )
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Arquivo salvo em Downloads", Toast.LENGTH_LONG).show()
+                }
+
+            }catch (e: Exception){
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Erro: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
     @OptIn(ExperimentalTime::class)
     open fun fetchTicket(ticketId: Int) {
         viewModelScope.launch {
             setIsLoading(true)
 
-            val ticket = ticketRepository.getTicket(ticketId)
-
-            if(ticket == null) return@launch
+            val ticket = ticketRepository.getTicket(ticketId) ?: return@launch
 
             setTheme(ticket.subject)
             setCourse(ticket.course)
             setStatus(ticket.status)
 
-            setMessagesList(messageRepository.listMessages(ticketId))
-
-            setIsLoading(false)
+            authRepository.getUserInfo()?.id?.let { userId ->
+                setMessagesList(messageRepository.listMessages(ticketId, userId))
+                setIsLoading(false)
+            }
         }
     }
 }
