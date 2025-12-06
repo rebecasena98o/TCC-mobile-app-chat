@@ -19,30 +19,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tccmobile.navigation.Routes
-import com.example.tccmobile.ui.theme.BackgroundPage
-import com.example.tccmobile.ui.theme.HeaderBlue
-import com.example.tccmobile.ui.theme.TextGray
+import com.example.tccmobile.ui.theme.BackgroundGray
 import com.example.tccmobile.ui.components.utils.AppHeader
-import com.example.tccmobile.ui.components.utils.AppBottomBar
 import com.example.tccmobile.ui.components.utils.BottomNavItem
 import com.example.tccmobile.ui.components.utils.BottomNavigationBar
 import com.example.tccmobile.ui.components.utils.ButtonForm
 import com.example.tccmobile.ui.components.utils.TicketCard
+import com.example.tccmobile.ui.theme.AzulLetra
+import com.example.tccmobile.ui.theme.Gray
 
 @Composable
 fun DashboardTicketsScreen(
-    viewModel: DashboardViewModel = viewModel(),
+    viewModel: StudentTicketsViewModel = viewModel(),
     navigateBarItems: List<BottomNavItem>,
     currentRoute: String,
-    onTicketClick: (String) -> Unit
+    onTicketClick: (String) -> Unit,
+    onClickNew: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundPage)
+            .background(BackgroundGray)
     ) {
         // 1. Header Compartilhado
         AppHeader(
@@ -66,20 +65,20 @@ fun DashboardTicketsScreen(
                 Column {
                     Text(
                         text = "Meus Envios",
-                        color = HeaderBlue,
+                        color = AzulLetra,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "Acompanhe seus tickets",
-                        color = TextGray,
+                        color = Gray,
                         fontSize = 14.sp
                     )
                 }
 
                 ButtonForm(
                     text = "Novo",
-                    backgroundColor = HeaderBlue,
+                    backgroundColor = AzulLetra,
                     contentColor = Color.White,
                     cornerRadius = 16,
                     icon = {
@@ -90,7 +89,7 @@ fun DashboardTicketsScreen(
                             modifier = Modifier.size(18.dp)
                         )
                     },
-                    onClick = { /* Ação Novo Ticket */ }
+                    onClick = { onClickNew() }
                 )
             }
 
