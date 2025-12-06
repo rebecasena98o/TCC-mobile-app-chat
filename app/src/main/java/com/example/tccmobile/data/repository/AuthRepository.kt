@@ -3,6 +3,7 @@ package com.example.tccmobile.data.repository
 import android.util.Log
 import com.example.tccmobile.data.dto.StudentDto
 import com.example.tccmobile.data.dto.UserDto
+import com.example.tccmobile.data.dto.UserInsertDto
 import com.example.tccmobile.data.entity.Student
 import com.example.tccmobile.data.supabase.SupabaseClient.client
 import io.github.jan.supabase.auth.auth
@@ -72,12 +73,11 @@ class AuthRepository {
             } ?: return false
 
             Log.d("SUPABASE_DEBUG", "Auth retornou: $auth")
-            val userDto = UserDto(
+            val userDto = UserInsertDto(
                 id = auth.id,
                 name = student.name,
                 email = student.email,
                 registry = student.registry,
-                createdAt = null
             )
 
            client.postgrest.from("users")
