@@ -142,7 +142,7 @@ class NewTicketViewModel(
                 user?.id?.let { id ->
                     val ticket = ticketRepository.createTicket(
                         subject = _uiState.value.temaTcc,
-                        status = "aberto",
+                        status = "pendente",
                         remark = _uiState.value.observacoes,
                         course = _uiState.value.curso,
                         userId = id
