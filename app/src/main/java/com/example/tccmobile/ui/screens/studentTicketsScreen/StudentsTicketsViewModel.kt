@@ -20,7 +20,7 @@ class StudentTicketsViewModel(
 
     init {
         viewModelScope.launch {
-            carregarTicketsMock()
+            carregarTickets()
         }
     }
 
@@ -30,7 +30,7 @@ class StudentTicketsViewModel(
         }
     }
 
-    private fun carregarTicketsMock() {
+    private fun carregarTickets() {
         viewModelScope.launch {
             val user = authRepository.getUserInfo()
 
