@@ -28,30 +28,8 @@ import com.example.tccmobile.ui.screens.chatStudent.ChatStudentScreen
 import com.example.tccmobile.ui.screens.loginScreen.LoginScreen
 import com.example.tccmobile.ui.screens.registerScreen.RegisterScreen
 import com.example.tccmobile.ui.screens.newTicketScreen.NewTicketScreen
-import com.example.tccmobile.ui.screens.profileScreen.Librarian
 import com.example.tccmobile.ui.screens.profileLibrarian.LibrarianProfileScreen
-import com.example.tccmobile.ui.screens.profileScreen.Student
 import com.example.tccmobile.ui.screens.profileStudent.StudentProfileScreen
-
-private val testLibrarian: Librarian = Librarian(
-    nameLibrarian = "Ana Costa",
-    role = "Bibliotecária Sênior",
-    emailLibrarian = "ana.costa@unifor.br",
-    phoneLibrarian = "(85) 3477-3000",
-    recebidos = 45,
-
-)
-
-private val testStudent: Student = Student(
-    nameStudent = "João Silva",
-    curso = "Engenharia de Software",
-    matricula = "20210011234",
-    emailStudent = "ana.costa@unifor.br",
-    phoneStudent = "(85) 3477-3000",
-    tccsEnviados = 2,
-    tccsEmAnalise = 8,
-
-)
 
 
 @SuppressLint("ViewModelConstructorInComposable", "ComposableDestinationInComposeScope")
