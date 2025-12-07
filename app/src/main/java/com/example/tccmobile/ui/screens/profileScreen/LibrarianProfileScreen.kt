@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,16 +29,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tccmobile.ui.components.utils.BottomNavItem
+import com.example.tccmobile.ui.components.utils.BottomNavigationBar
 import com.example.tccmobile.ui.components.utils.ProfileScreenHeader
-import com.example.tccmobile.ui.theme.AmareloEstrela
-import com.example.tccmobile.ui.theme.AzulNoite
 import com.example.tccmobile.ui.theme.AzulSuperClaro
 import com.example.tccmobile.ui.theme.BlueEscuro
 import com.example.tccmobile.ui.theme.Branco
 import com.example.tccmobile.ui.theme.CianoAzul
-import com.example.tccmobile.ui.theme.Laranja
-import com.example.tccmobile.ui.theme.VerdeEscuro
-import com.example.tccmobile.ui.theme.Vermelho
+import com.example.tccmobile.ui.theme.DarkBlue
+import com.example.tccmobile.ui.theme.NotificationRed
+import com.example.tccmobile.ui.theme.StatusTextConcluido
+
 
 
 @Composable
@@ -108,7 +111,7 @@ fun LibrarianContactCard(dataLibrarian: Librarian, modifier: Modifier = Modifier
             ) {
                 Card(
                     shape = RoundedCornerShape(50.dp),
-                    colors = CardDefaults.cardColors(containerColor = AzulNoite.copy(alpha = 0.8f)),
+                    colors = CardDefaults.cardColors(containerColor = DarkBlue.copy(alpha = 0.8f)),
                     border = BorderStroke(1.dp, CianoAzul),
                 ) {
                     Box(
@@ -159,39 +162,6 @@ fun LibrarianContactCard(dataLibrarian: Librarian, modifier: Modifier = Modifier
         }
     }
 }
-
-@Composable
-fun ProfileLibrarianInfoCard(
-    title: String,
-    content: @Composable () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = BlueEscuro.copy(alpha = 0.95f)),
-        elevation = CardDefaults.cardElevation(2.dp),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(24.dp)
-                .wrapContentHeight()
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = Branco
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            content()
-        }
-    }
-}
-
-
-
-
-
 @SuppressLint("DefaultLocale")
 @Composable
 fun StatCardsLibrarianSection(data: Librarian) {
@@ -205,18 +175,10 @@ fun StatCardsLibrarianSection(data: Librarian) {
         ) {
 
             StatsCardLibrarian(
-                title = "Corrigidos",
-                value = data.corrigidos.toString(),
+                title = "Recebidos",
+                value = data.recebidos.toString(),
                 icon = Icons.Default.CheckCircle,
-                iconTint = VerdeEscuro,
-                modifier = Modifier.weight(1f)
-            )
-
-            StatsCardLibrarian(
-                title = "Pendentes",
-                value = data.pendentes.toString(),
-                icon = Icons.Default.Schedule,
-                iconTint = Laranja,
+                iconTint = StatusTextConcluido,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -228,22 +190,6 @@ fun StatCardsLibrarianSection(data: Librarian) {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-
-            StatsCardLibrarian(
-                title = "Avaliação",
-                value = String.format("%.1f / 5.0", data.avaliacaoMedia),
-                icon = Icons.Default.Star, // Ícone de estrela
-                iconTint = AmareloEstrela, // Cor amarela
-                modifier = Modifier.weight(1f)
-            )
-
-            StatsCardLibrarian(
-                title = "Tempo Médio",
-                value = data.tempoMedio,
-                icon = Icons.Default.Timer,
-                iconTint = CianoAzul,
-                modifier = Modifier.weight(1f)
-            )
         }
     }
 }
@@ -293,12 +239,18 @@ fun LibrarianContactDetail(icon: ImageVector, title: String, value: String) {
 @Composable
 fun LibrarianProfileScreen(
     data: Librarian,
-    onLogout: () -> Unit
+    currentRoute: String,
+    navigateBarItems: List<BottomNavItem>,
+    onLogout: () -> Unit,
 ) {
     Scaffold(
         containerColor = Branco,
-        topBar = {
-            ProfileScreenHeader()
+        topBar = { ProfileScreenHeader() },
+        bottomBar = {
+            BottomNavigationBar(
+                items = navigateBarItems,
+                currentRoute = currentRoute,
+            )
         }
     ) { paddingValues ->
 
@@ -326,62 +278,6 @@ fun LibrarianProfileScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                ProfileLibrarianInfoCard(
-                    title = "Permissões",
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                    ) {
-
-                        data.permissoes.forEach { permission ->
-                            val icon: ImageVector
-                            val tintColor: Color
-
-                            when {
-                                permission.isSpecial && !permission.hasPermission -> {
-                                    icon = Icons.Default.RemoveCircle
-                                    tintColor = Vermelho
-                                }
-                                permission.hasPermission -> {
-
-                                    icon = Icons.Default.CheckCircle
-                                    tintColor = VerdeEscuro
-                                }
-                                else -> {
-                                    icon = Icons.Default.Close
-                                    tintColor = Vermelho
-                                }
-                            }
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = permission.nome,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = AzulSuperClaro,
-                                    fontWeight = FontWeight.Normal
-                                )
-
-                                Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    tint = tintColor,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 Button(
                     onClick = onLogout,
                     modifier = Modifier
@@ -389,9 +285,9 @@ fun LibrarianProfileScreen(
                         .height(48.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Branco,
-                        contentColor = Vermelho
+                        contentColor = NotificationRed
                     ),
-                    border = BorderStroke(1.5.dp, Vermelho)
+                    border = BorderStroke(1.5.dp, NotificationRed)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ExitToApp,
@@ -406,38 +302,42 @@ fun LibrarianProfileScreen(
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
-                
-                AppVersionFooter(
-                )
 
-                Spacer(modifier = Modifier.height(60.dp))
+                AppVersionFooter()
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewLibrarianProfileScreen() {
-    val previewGrantedPermissions = setOf(
-        AppPermission.MANAGE_TICKETS,
-        AppPermission.TRANSFER_TICKETS,
-        AppPermission.FINALIZE_TICKETS
-    )
 
-    val testLibrarian = Librarian(
-        nameLibrarian = "Ana Costa",
-        role = "Bibliotecária Sênior",
-        emailLibrarian = "ana.costa@unifor.br",
-        phoneLibrarian = "(85) 3477-3000",
-        corrigidos = 45,
-        pendentes = 8,
-        avaliacaoMedia = 4.8f,
-        permissoes = generatePermissions(previewGrantedPermissions)
-    )
 
-    MaterialTheme {
-        LibrarianProfileScreen(testLibrarian) {}
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewLibrarianProfileScreen() {
+//    val previewGrantedPermissions = setOf(
+//        AppPermission.MANAGE_TICKETS,
+//        AppPermission.TRANSFER_TICKETS,
+//        AppPermission.FINALIZE_TICKETS
+//    )
+//
+//    val testLibrarian = Librarian(
+//        nameLibrarian = "Ana Costa",
+//        role = "Bibliotecária Sênior",
+//        emailLibrarian = "ana.costa@unifor.br",
+//        phoneLibrarian = "(85) 3477-3000",
+//        recebidos = 45,
+//        permissoes = generatePermissions(previewGrantedPermissions)
+//    )
+//
+//    MaterialTheme {
+//        LibrarianProfileScreen(
+//            data = testLibrarian,
+//            currentRoute = "profile",
+//            navigateBarItems = List<BottomNavItem>,
+//            onLogout = () -> Uni
+//        )
+//    }
+//}
