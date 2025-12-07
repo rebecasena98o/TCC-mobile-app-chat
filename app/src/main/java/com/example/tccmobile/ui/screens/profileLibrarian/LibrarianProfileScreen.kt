@@ -1,4 +1,4 @@
-package com.example.tccmobile.ui.screens.profileScreen
+package com.example.tccmobile.ui.screens.profileLibrarian
 
 import AppVersionFooter
 import android.annotation.SuppressLint
@@ -12,26 +12,23 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.RemoveCircle
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tccmobile.ui.components.utils.BottomNavItem
 import com.example.tccmobile.ui.components.utils.BottomNavigationBar
 import com.example.tccmobile.ui.components.utils.ProfileScreenHeader
+import com.example.tccmobile.ui.screens.newTicketScreen.NewTicketViewModel
+import com.example.tccmobile.ui.screens.profileScreen.Librarian
 import com.example.tccmobile.ui.theme.AzulSuperClaro
 import com.example.tccmobile.ui.theme.BlueEscuro
 import com.example.tccmobile.ui.theme.Branco
@@ -39,7 +36,9 @@ import com.example.tccmobile.ui.theme.CianoAzul
 import com.example.tccmobile.ui.theme.DarkBlue
 import com.example.tccmobile.ui.theme.NotificationRed
 import com.example.tccmobile.ui.theme.StatusTextConcluido
-
+import kotlin.collections.map
+import kotlin.collections.take
+import kotlin.text.first
 
 
 @Composable
@@ -96,7 +95,7 @@ fun StatsCardLibrarian(
 
 
 @Composable
-fun LibrarianContactCard(dataLibrarian: Librarian, modifier: Modifier = Modifier) {
+fun LibrarianContactCard(name: String, initials: String, email: String, registry: String, role: String,  modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = BlueEscuro.copy()),
@@ -118,8 +117,6 @@ fun LibrarianContactCard(dataLibrarian: Librarian, modifier: Modifier = Modifier
                         modifier = Modifier.size(72.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        val initials = dataLibrarian.nameLibrarian.split(" ").take(2).map { it.first() }
-                            .joinToString("")
                         Text(
                             text = initials,
                             style = MaterialTheme.typography.headlineMedium,
@@ -132,12 +129,12 @@ fun LibrarianContactCard(dataLibrarian: Librarian, modifier: Modifier = Modifier
 
                 Column {
                     Text(
-                        text = dataLibrarian.nameLibrarian,
+                        text = name,
                         style = MaterialTheme.typography.titleMedium,
                         color = AzulSuperClaro
                     )
                     Text(
-                        text = dataLibrarian.role,
+                        text = role,
                         style = MaterialTheme.typography.titleMedium,
                         color = AzulSuperClaro.copy(alpha = 0.7f)
                     )
@@ -149,22 +146,22 @@ fun LibrarianContactCard(dataLibrarian: Librarian, modifier: Modifier = Modifier
             LibrarianContactDetail(
                 icon = Icons.Default.MailOutline,
                 title = "E-mail",
-                value = dataLibrarian.emailLibrarian
+                value = email
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             LibrarianContactDetail(
                 icon = Icons.Default.Call,
-                title = "Telefone",
-                value = dataLibrarian.phoneLibrarian
+                title = "Matricula",
+                value = registry
             )
         }
     }
 }
 @SuppressLint("DefaultLocale")
 @Composable
-fun StatCardsLibrarianSection(data: Librarian) {
+fun StatCardsLibrarianSection(received: Int) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -176,7 +173,7 @@ fun StatCardsLibrarianSection(data: Librarian) {
 
             StatsCardLibrarian(
                 title = "Recebidos",
-                value = data.recebidos.toString(),
+                value = received.toString(),
                 icon = Icons.Default.CheckCircle,
                 iconTint = StatusTextConcluido,
                 modifier = Modifier.weight(1f)
@@ -238,11 +235,13 @@ fun LibrarianContactDetail(icon: ImageVector, title: String, value: String) {
 
 @Composable
 fun LibrarianProfileScreen(
-    data: Librarian,
+    viewModel: LibrarianProfileViewModel = viewModel(),
     currentRoute: String,
     navigateBarItems: List<BottomNavItem>,
     onLogout: () -> Unit,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         containerColor = Branco,
         topBar = { ProfileScreenHeader() },
@@ -271,11 +270,17 @@ fun LibrarianProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                LibrarianContactCard(data)
+                LibrarianContactCard(
+                    name = uiState.name,
+                    initials = uiState.initial,
+                    email = uiState.email,
+                    registry = uiState.registry,
+                    role = uiState.role,
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                StatCardsLibrarianSection(data)
+                StatCardsLibrarianSection(received = uiState.received)
 
                 Spacer(modifier = Modifier.height(10.dp))
 

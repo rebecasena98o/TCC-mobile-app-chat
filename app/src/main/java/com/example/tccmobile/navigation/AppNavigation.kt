@@ -13,9 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,7 +22,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.tccmobile.navigation.Routes
 import androidx.navigation.navArgument
 import com.example.tccmobile.ui.screens.bibliotecarioDashboard.DashboardScreen
 import com.example.tccmobile.ui.screens.chatStudent.ChatStudentScreen
@@ -32,9 +29,9 @@ import com.example.tccmobile.ui.screens.loginScreen.LoginScreen
 import com.example.tccmobile.ui.screens.registerScreen.RegisterScreen
 import com.example.tccmobile.ui.screens.newTicketScreen.NewTicketScreen
 import com.example.tccmobile.ui.screens.profileScreen.Librarian
-import com.example.tccmobile.ui.screens.profileScreen.LibrarianProfileScreen
+import com.example.tccmobile.ui.screens.profileLibrarian.LibrarianProfileScreen
 import com.example.tccmobile.ui.screens.profileScreen.Student
-import com.example.tccmobile.ui.screens.profileScreen.StudentProfileScreen
+import com.example.tccmobile.ui.screens.profileStudent.StudentProfileScreen
 
 private val testLibrarian: Librarian = Librarian(
     nameLibrarian = "Ana Costa",
@@ -116,7 +113,6 @@ fun AppNavigation() {
                 onAuthFailed = { navController.navigate(Routes.LOGIN) }
             ) {
                 LibrarianProfileScreen(
-                    data = testLibrarian,
                     currentRoute = Routes.LIBRARIAN_PROFILE_SCREEN,
                     navigateBarItems= listOf(
                             BottomNavItem(
@@ -149,7 +145,7 @@ fun AppNavigation() {
                             popUpTo(Routes.LIBRARIAN_PROFILE_SCREEN) { inclusive = true }
                         }
                     }
-                    )
+                )
             }
         }
 
