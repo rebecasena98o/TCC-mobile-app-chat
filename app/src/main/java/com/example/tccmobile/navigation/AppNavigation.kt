@@ -63,11 +63,10 @@ fun AppNavigation() {
         composable(Routes.NEW_TICKET) {
             NewTicketScreen(
                 onBackClick = {
-
                     navController.popBackStack()
                 },
-                onTicketCreated = {
-                    navController.popBackStack()
+                onTicketCreated = { ticketId ->
+                    navController.navigate(Routes.ticket(ticketId.toString()))
                 }
             )
         }
