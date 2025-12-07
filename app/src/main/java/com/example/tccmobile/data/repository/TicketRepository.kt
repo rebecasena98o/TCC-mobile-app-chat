@@ -77,6 +77,68 @@ class TicketRepository {
     }
 
     @OptIn(ExperimentalTime::class)
+    suspend fun getAllTicket(): List<Ticket>{
+        return try {
+
+            val join = Columns.raw("""
+                id, subject, status, created_at, updated_at, course,
+                user:users(*)
+                """.trimIndent())
+
+            val ticket = client.postgrest.from("tickets").select(join){
+                order("updated_at", order = Order.DESCENDING)
+            }.decodeList<TicketListDto>()
+
+            ticket.map {
+                Ticket(
+                    id = it.id,
+                    subject = it.subject,
+                    status = transformTicketStatus(it.status),
+                    createdAt = it.createdAt,
+                    updatedAt = it.updatedAt,
+                    course = it.course,
+                    authorName = it.user.name
+                )
+            }
+        }catch (e: Exception){
+            Log.e("SUPABASE_DEBUG", "Erro ao tentar consultar tickets abertos: $e")
+            listOf()
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    suspend fun getAllByStatus(filter: String): List<Ticket>{
+        return try {
+            val join = Columns.raw("""
+                id, subject, status, created_at, updated_at, course,
+                user:users(*)
+                """.trimIndent())
+
+            val ticket = client.postgrest.from("tickets").select(join){
+                filter {
+                    eq("status", filter)
+                }
+                order("updated_at", order = Order.DESCENDING)
+            }.decodeList<TicketListDto>()
+
+            ticket.map {
+                Ticket(
+                    id = it.id,
+                    subject = it.subject,
+                    status = transformTicketStatus(it.status),
+                    createdAt = it.createdAt,
+                    updatedAt = it.updatedAt,
+                    course = it.course,
+                    authorName = it.user.name
+                )
+            }
+        }catch (e: Exception){
+            Log.e("SUPABASE_DEBUG", "Erro ao tentar consultar tickets $filter: $e")
+            listOf()
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
     suspend fun createTicket(
         subject: String,
         status: String,
