@@ -95,57 +95,71 @@ fun AppNavigation() {
 
         //Precisa ser implementado sua rota correta quando o dashboard for criado
         composable(Routes.NEW_TICKET) {
-            NewTicketScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onTicketCreated = { ticketId ->
-                    navController.navigate(Routes.ticket(ticketId.toString()))
-                }
-            )
+            ProtectedRoute(
+                session = client.auth.currentSessionOrNull(),
+                onAuthFailed = { navController.navigate(Routes.LOGIN) }
+            ) {
+                NewTicketScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onTicketCreated = { ticketId ->
+                        navController.navigate(Routes.ticket(ticketId.toString()))
+                    }
+                )
+            }
         }
 
         composable(Routes.LIBRARIAN_PROFILE_SCREEN) {
-            LibrarianProfileScreen(
-                data = testLibrarian,
-                currentRoute = Routes.LIBRARIAN_PROFILE_SCREEN,
-                navigateBarItems= listOf(
-                        BottomNavItem(
-                            label = "Tickets",
-                            icon = Icons.Outlined.Description,
-                            route = Routes.BIBLIO_TICKETS,
-                            onClick = { route ->
-                                navController.navigate(route)
-                            }
+            ProtectedRoute(
+                session = client.auth.currentSessionOrNull(),
+                onAuthFailed = { navController.navigate(Routes.LOGIN) }
+            ) {
+                LibrarianProfileScreen(
+                    data = testLibrarian,
+                    currentRoute = Routes.LIBRARIAN_PROFILE_SCREEN,
+                    navigateBarItems= listOf(
+                            BottomNavItem(
+                                label = "Tickets",
+                                icon = Icons.Outlined.Description,
+                                route = Routes.BIBLIO_TICKETS,
+                                onClick = { route ->
+                                    navController.navigate(route)
+                                }
+                            ),
+                            BottomNavItem(
+                                label = "Dashboard",
+                                icon = Icons.Outlined.Dashboard,
+                                route = Routes.BIBLIO_DASHBOARD, // Defina a rota correta para o dashboard
+                                onClick = { route ->
+                                    navController.navigate(route)
+                                }
+                            ),
+                            BottomNavItem(
+                                label = "Perfil",
+                                icon = Icons.Outlined.Person,
+                                route = Routes.LIBRARIAN_PROFILE_SCREEN,
+                                onClick = { route ->
+                                    navController.navigate(route)
+                                }
+                            )
                         ),
-                        BottomNavItem(
-                            label = "Dashboard",
-                            icon = Icons.Outlined.Dashboard,
-                            route = Routes.BIBLIO_DASHBOARD, // Defina a rota correta para o dashboard
-                            onClick = { route ->
-                                navController.navigate(route)
-                            }
-                        ),
-                        BottomNavItem(
-                            label = "Perfil",
-                            icon = Icons.Outlined.Person,
-                            route = Routes.LIBRARIAN_PROFILE_SCREEN,
-                            onClick = { route ->
-                                navController.navigate(route)
-                            }
-                        )
-                    ),
-                onLogout = {
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo(Routes.LIBRARIAN_PROFILE_SCREEN) { inclusive = true }
+                    onLogout = {
+                        navController.navigate(Routes.LOGIN) {
+                            popUpTo(Routes.LIBRARIAN_PROFILE_SCREEN) { inclusive = true }
+                        }
                     }
-                }
-                )
+                    )
+            }
         }
 
         composable(Routes.STUDENT_PROFILE_SCREEN) {
-            StudentProfileScreen(
-                data =testStudent,
+            ProtectedRoute(
+                session = client.auth.currentSessionOrNull(),
+                onAuthFailed = { navController.navigate(Routes.LOGIN) }
+            ) {
+                StudentProfileScreen(
+                data = testStudent,
                 currentRoute = Routes.STUDENT_PROFILE_SCREEN,
                 navigateBarItems =listOf(
                     BottomNavItem(
@@ -171,6 +185,7 @@ fun AppNavigation() {
                     }
                 }
             )
+            }
         }
 
 
@@ -180,135 +195,150 @@ fun AppNavigation() {
                 navArgument("id") { type = NavType.StringType }
             ))
         { entry ->
-            val id = entry.arguments?.getString("id")
-            var isStudent by remember { mutableStateOf<Boolean?>(null) }
+            ProtectedRoute(
+                session = client.auth.currentSessionOrNull(),
+                onAuthFailed = { navController.navigate(Routes.LOGIN) }
+            ) { session ->
+                val id = entry.arguments?.getString("id")
+                var isStudent by remember { mutableStateOf<Boolean?>(null) }
 
-            LaunchedEffect(Unit) {
-                val session = client.auth.currentSessionOrNull()
-                isStudent = session?.user?.userMetadata?.get("isStudent")?.jsonPrimitive?.boolean
+                isStudent = session.user?.userMetadata?.get("isStudent")?.jsonPrimitive?.boolean
                 Log.d("AUTH_LOG", "isStudent atualizado: $isStudent")
-            }
 
-            if (!id.isNullOrEmpty() && isStudent != null) {
-                ChatStudentScreen(
-                    ticketId = id,
-                    isStudent = isStudent!!,
-                    onBackClick = {
-                        if(isStudent!!){
-                            navController.navigate(Routes.HOME)
+                if (!id.isNullOrEmpty() && isStudent != null) {
+                    ChatStudentScreen(
+                        ticketId = id,
+                        isStudent = isStudent!!,
+                        onBackClick = {
+                            if(isStudent!!){
+                                navController.navigate(Routes.HOME)
 
-                        }else{
-                            navController.navigate(Routes.BIBLIO_TICKETS)
+                            }else{
+                                navController.navigate(Routes.BIBLIO_TICKETS)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
 
 
 
         composable(Routes.HOME) {
-            StudentsTicketsScreen(
-                currentRoute = Routes.HOME,
-                navigateBarItems = listOf(
-                    BottomNavItem(
-                        label = "Meus Envios",
-                        icon = Icons.Outlined.Description,
-                        route = Routes.HOME,
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
+
+            ProtectedRoute(
+                session = client.auth.currentSessionOrNull(),
+                onAuthFailed = { navController.navigate(Routes.LOGIN) }
+            ) {
+                StudentsTicketsScreen(
+                    currentRoute = Routes.HOME,
+                    navigateBarItems = listOf(
+                        BottomNavItem(
+                            label = "Meus Envios",
+                            icon = Icons.Outlined.Description,
+                            route = Routes.HOME,
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        ),
+                        BottomNavItem(
+                            label = "Perfil",
+                            icon = Icons.Outlined.Person,
+                            route = Routes.STUDENT_PROFILE_SCREEN,
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        )
                     ),
-                    BottomNavItem(
-                        label = "Perfil",
-                        icon = Icons.Outlined.Person,
-                        route = Routes.STUDENT_PROFILE_SCREEN,
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
-                    )
-                ),
-                onClickNew = {
-                    navController.navigate(Routes.NEW_TICKET)
-                },
-                onTicketClick = { ticketId ->
-                    navController.navigate(Routes.ticket(ticketId.toString()))
-                }
-            )
+                    onClickNew = {
+                        navController.navigate(Routes.NEW_TICKET)
+                    },
+                    onTicketClick = { ticketId ->
+                        navController.navigate(Routes.ticket(ticketId.toString()))
+                    }
+                )
+
+            }
         }
 
         composable(Routes.BIBLIO_TICKETS) {
-            BiblioTicketsScreen(
-                navigateBarItems = listOf(
-                    BottomNavItem(
-                        label = "Tickets",
-                        icon = Icons.Outlined.Description,
-                        route = Routes.BIBLIO_TICKETS,
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
+            ProtectedRoute(
+                session = client.auth.currentSessionOrNull(),
+                onAuthFailed = { navController.navigate(Routes.LOGIN) }
+            ) {
+                BiblioTicketsScreen(
+                    navigateBarItems = listOf(
+                        BottomNavItem(
+                            label = "Tickets",
+                            icon = Icons.Outlined.Description,
+                            route = Routes.BIBLIO_TICKETS,
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        ),
+                        BottomNavItem(
+                            label = "Dashboard",
+                            icon = Icons.Outlined.Dashboard,
+                            route = Routes.BIBLIO_DASHBOARD, // Defina a rota correta para o dashboard
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        ),
+                        BottomNavItem(
+                            label = "Perfil",
+                            icon = Icons.Outlined.Person,
+                            route = Routes.LIBRARIAN_PROFILE_SCREEN,
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        )
                     ),
-                    BottomNavItem(
-                        label = "Dashboard",
-                        icon = Icons.Outlined.Dashboard,
-                        route = Routes.BIBLIO_DASHBOARD, // Defina a rota correta para o dashboard
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
-                    ),
-                    BottomNavItem(
-                        label = "Perfil",
-                        icon = Icons.Outlined.Person,
-                        route = Routes.LIBRARIAN_PROFILE_SCREEN,
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
-                    )
-                ),
-                currentRoute = Routes.BIBLIO_TICKETS,
-                onTicketClick = { ticketId ->
-                    navController.navigate(Routes.ticket(ticketId.toString()))
-                },
-                onDashboardClick = {
-                    navController.navigate(Routes.BIBLIO_DASHBOARD)
-                }
-            )
+                    currentRoute = Routes.BIBLIO_TICKETS,
+                    onTicketClick = { ticketId ->
+                        navController.navigate(Routes.ticket(ticketId.toString()))
+                    },
+                    onDashboardClick = {
+                        navController.navigate(Routes.BIBLIO_DASHBOARD)
+                    }
+                )
+            }
         }
 
         composable(Routes.BIBLIO_DASHBOARD) {
-            DashboardScreen(
-                navigateBarItems = listOf(
-                    BottomNavItem(
-                        label = "Tickets",
-                        icon = Icons.Outlined.Description,
-                        route = Routes.BIBLIO_TICKETS,
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
+            ProtectedRoute(
+                session = client.auth.currentSessionOrNull(),
+                onAuthFailed = { navController.navigate(Routes.LOGIN) }
+            ) {
+                DashboardScreen(
+                    navigateBarItems = listOf(
+                        BottomNavItem(
+                            label = "Tickets",
+                            icon = Icons.Outlined.Description,
+                            route = Routes.BIBLIO_TICKETS,
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        ),
+                        BottomNavItem(
+                            label = "Dashboard",
+                            icon = Icons.Outlined.Dashboard,
+                            route = Routes.BIBLIO_DASHBOARD, // Defina a rota correta para o dashboard
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        ),
+                        BottomNavItem(
+                            label = "Perfil",
+                            icon = Icons.Outlined.Person,
+                            route = Routes.LIBRARIAN_PROFILE_SCREEN,
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        )
                     ),
-                    BottomNavItem(
-                        label = "Dashboard",
-                        icon = Icons.Outlined.Dashboard,
-                        route = Routes.BIBLIO_DASHBOARD, // Defina a rota correta para o dashboard
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
-                    ),
-                    BottomNavItem(
-                        label = "Perfil",
-                        icon = Icons.Outlined.Person,
-                        route = Routes.LIBRARIAN_PROFILE_SCREEN,
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
-                    )
-                ),
-                currentRoute = Routes.BIBLIO_DASHBOARD
-            )
+                    currentRoute = Routes.BIBLIO_DASHBOARD
+                )
+            }
         }
-        composable(Routes.PROFILE) {
-            Text(text = "Perfil")
-        }
-
     }
 }
