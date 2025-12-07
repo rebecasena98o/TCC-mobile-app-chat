@@ -30,7 +30,6 @@ import com.example.tccmobile.ui.screens.chatStudent.ChatStudentScreen
 import com.example.tccmobile.ui.screens.loginScreen.LoginScreen
 import com.example.tccmobile.ui.screens.registerScreen.RegisterScreen
 import com.example.tccmobile.ui.screens.newTicketScreen.NewTicketScreen
-import com.example.tccmobile.ui.screens.profileScreen.AppPermission
 import com.example.tccmobile.ui.screens.profileScreen.Librarian
 import com.example.tccmobile.ui.screens.profileScreen.LibrarianProfileScreen
 import com.example.tccmobile.ui.screens.profileScreen.Student
