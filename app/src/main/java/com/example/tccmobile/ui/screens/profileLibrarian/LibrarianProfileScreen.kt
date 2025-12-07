@@ -288,7 +288,9 @@ fun LibrarianProfileScreen(
 
             Box(modifier = Modifier.padding(horizontal = 60.dp)){
                 Button(
-                    onClick = onLogout,
+                    onClick = {
+                        viewModel.onLogoutClick {   onLogout() }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),

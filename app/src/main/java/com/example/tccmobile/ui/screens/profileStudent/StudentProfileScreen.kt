@@ -1,4 +1,4 @@
-package com.example.tccmobile.ui.screens.profileScreen
+package com.example.tccmobile.ui.screens.profileStudent
 
 import AppVersionFooter
 import androidx.compose.foundation.BorderStroke
@@ -15,17 +15,21 @@ import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tccmobile.ui.components.utils.BottomNavItem
 import com.example.tccmobile.ui.components.utils.BottomNavigationBar
 import com.example.tccmobile.ui.components.utils.ProfileScreenHeader
+import com.example.tccmobile.ui.screens.profileLibrarian.LibrarianProfileViewModel
+import com.example.tccmobile.ui.screens.profileScreen.Student
 import com.example.tccmobile.ui.theme.*
 
 @Composable
@@ -107,7 +111,7 @@ fun StudentContactDetail(icon: ImageVector, title: String, value: String) {
 }
 
 @Composable
-fun StudentContactCard(data: Student, modifier: Modifier = Modifier) {
+fun StudentContactCard(name: String, registry: String, email: String, course: String, initials: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = BlueEscuro.copy(alpha = 0.95f)),
@@ -125,35 +129,32 @@ fun StudentContactCard(data: Student, modifier: Modifier = Modifier) {
                         modifier = Modifier.size(72.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        val initials = data.nameStudent.split(" ").take(2).map { it.first() }.joinToString("")
                         Text(initials, style = MaterialTheme.typography.headlineMedium, color = Branco)
                     }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column {
-                    Text(data.nameStudent, style = MaterialTheme.typography.titleMedium, color = AzulSuperClaro)
-                    Text(data.matricula, style = MaterialTheme.typography.titleSmall, color = AzulSuperClaro.copy(alpha = 0.7f))
+                    Text(name, style = MaterialTheme.typography.titleMedium, color = AzulSuperClaro)
+                    Text(registry, style = MaterialTheme.typography.titleSmall, color = AzulSuperClaro.copy(alpha = 0.7f))
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            StudentContactDetail(Icons.AutoMirrored.Filled.MenuBook, "Curso", data.curso)
+            StudentContactDetail(Icons.AutoMirrored.Filled.MenuBook, "Curso", course)
             Spacer(modifier = Modifier.height(16.dp))
-            StudentContactDetail(Icons.Default.MailOutline, "E-mail", data.emailStudent)
-            Spacer(modifier = Modifier.height(16.dp))
-            StudentContactDetail(Icons.Default.Call, "Telefone", data.phoneStudent)
+            StudentContactDetail(Icons.Default.MailOutline, "E-mail", email)
         }
     }
 }
 
 @Composable
-fun StatCardsStudentSection(data: Student) {
+fun StatCardsStudentSection(sent: Int, inAnalyses: Int) {
     Column(Modifier.fillMaxWidth()) {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
-            StatsCardStudent("TCCs Enviados", data.tccsEnviados.toString(), Icons.Default.CheckCircle, StatusTextConcluido, Modifier.weight(1f))
-            StatsCardStudent("Em Análise", data.tccsEmAnalise.toString(), Icons.Default.Schedule, Orange, Modifier.weight(1f))
+            StatsCardStudent("Tickets Abertos", sent.toString(), Icons.Default.CheckCircle, StatusTextConcluido, Modifier.weight(1f))
+            StatsCardStudent("Em Análise", inAnalyses.toString(), Icons.Default.Schedule, Orange, Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -164,12 +165,13 @@ fun StatCardsStudentSection(data: Student) {
 
 @Composable
 fun StudentProfileScreen(
-    data: Student,
+    viewModel: StudentProfileViewModel = viewModel(),
     currentRoute: String,
     navigateBarItems: List<BottomNavItem>,
-    onLogout: () -> Unit,
-
+    onLogout: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         containerColor = Branco,
         topBar = { ProfileScreenHeader() },
@@ -198,18 +200,29 @@ fun StudentProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                StudentContactCard(data)
+                StudentContactCard(
+                    name = uiState.name,
+                    registry = uiState.registry,
+                    email = uiState.email,
+                    course = uiState.course,
+                    initials = uiState.initial
+                )
 
                 Spacer(modifier = Modifier.height(25.dp))
 
-                StatCardsStudentSection(data)
+                StatCardsStudentSection(
+                    sent = uiState.sent,
+                    inAnalyses = uiState.inAnalysis
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
             Box(modifier= Modifier.padding(horizontal = 30.dp)){
                 Button(
-                    onClick = onLogout,
+                    onClick = {
+                        viewModel.onLogoutClick {   onLogout() }
+                    },
                     modifier = Modifier.fillMaxWidth().height(48.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Branco,

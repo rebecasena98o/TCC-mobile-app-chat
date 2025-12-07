@@ -155,25 +155,24 @@ fun AppNavigation() {
                 onAuthFailed = { navController.navigate(Routes.LOGIN) }
             ) {
                 StudentProfileScreen(
-                data = testStudent,
-                currentRoute = Routes.STUDENT_PROFILE_SCREEN,
-                navigateBarItems =listOf(
-                    BottomNavItem(
-                        label = "Meus Envios",
-                        icon = Icons.Outlined.Description,
-                        route = Routes.HOME,
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
-                    ),
-                    BottomNavItem(
-                        label = "Perfil",
-                        icon = Icons.Outlined.Person,
-                        route = Routes.STUDENT_PROFILE_SCREEN,
-                        onClick = { route ->
-                            navController.navigate(route)
-                        }
-                    )
+                    currentRoute = Routes.STUDENT_PROFILE_SCREEN,
+                    navigateBarItems =listOf(
+                        BottomNavItem(
+                            label = "Meus Envios",
+                            icon = Icons.Outlined.Description,
+                            route = Routes.HOME,
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        ),
+                        BottomNavItem(
+                            label = "Perfil",
+                            icon = Icons.Outlined.Person,
+                            route = Routes.STUDENT_PROFILE_SCREEN,
+                            onClick = { route ->
+                                navController.navigate(route)
+                            }
+                        )
                 ),
                 onLogout = {
                     navController.navigate(Routes.LOGIN) {
