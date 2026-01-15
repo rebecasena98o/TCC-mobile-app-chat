@@ -4,8 +4,7 @@
 
 
 ## Objetivo do projeto:
-[_OBJETIVO_]
-
+*Este projeto foi desenvolvido com o objetivo de auxiliar o sistema bibliotecário para correção de formatação e agendamento para orientação/ajuste de TCC, evitando conflito de agendas e volume de demandas muito alto.*
 
 
 ## Como Iniciar o Projeto ?
